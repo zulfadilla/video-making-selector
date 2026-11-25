@@ -13,6 +13,27 @@ Everything runs in your browser. No server, no account and no uploads.
 
 > Keep the tab open while recording. The video is recorded in real time.
 
+## Example scripts
+The **Examples** menu in the Script section loads a ready-made script (with Undo):
+Fun facts, Product launch, Tips list, Business results, Event promo, Motivational quote, and an Images demo.
+
+```
+# 5 Habits for a Productive Morning
+Wake up at the *same time* every day
+Drink a glass of water first
+Your morning routine:
+- Make your bed
+- Move your body for 10 minutes
+- Plan your top 3 tasks
+Skip your phone for the first 30 minutes
+Small habits, *big* results
+```
+
+## Online version
+The same tool is published as a claude.ai artifact, so it also opens on a phone.
+- The online version saves the finished video through the page's own save prompt.
+- Microphone recording isn't available online. Use **Voice file** there, or use this `index.html` on a computer.
+
 ## Script format
 | Write | Result |
 |---|---|

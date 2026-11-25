@@ -13,6 +13,7 @@
     --brand:#7c5cff; --brand2:#22d3ee; --ok:#34d399; --radius:14px;
   }
   *{box-sizing:border-box}
+  :root{color-scheme:dark}
   html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",system-ui,sans-serif}
   button,input,textarea{font:inherit;color:inherit}
   .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}
@@ -73,6 +74,21 @@
   .result .btn{width:100%}
   .result p{font-size:12px;margin:8px 0 0}
   fieldset{border:0;margin:0;padding:0;min-width:0}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:10px;max-width:min(560px,calc(100vw - 32px));background:#232937;border:1px solid #3a4256;border-radius:12px;padding:10px 12px;box-shadow:0 12px 40px rgba(0,0,0,.5);font-size:14px}
+  .toast[hidden],.mobile-bar[hidden]{display:none!important}
+  .toast{width:max-content}
+  .toast span{flex:1}
+  #playBtn{white-space:nowrap}
+  .mobile-bar{display:none}
+  @media (max-width:980px){
+    .app>section{order:-1}
+    .sticky{position:static}
+    canvas{max-height:46vh}
+    .mobile-bar{display:block;position:fixed;left:0;right:0;bottom:0;z-index:15;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(12,14,19,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line)}
+    .mobile-bar .btn{padding:13px}
+    body{padding-bottom:84px}
+    .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  }
   .subpanel{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;margin:-4px 0 16px}
   .subpanel[hidden],.subpanel [hidden]{display:none!important}
   .subrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
@@ -127,6 +143,9 @@
 
     <div class="card">
       <div class="card-h"><h2>2. Script</h2><span id="sceneInfo" class="muted"></span></div>
+      <div class="subrow" style="margin-bottom:10px">
+        <label class="tog">Examples <select id="exampleSel"><option value="">Load an example script…</option></select></label>
+      </div>
       <textarea id="script" spellcheck="false"></textarea>
       <details class="help">
         <summary>How to write a script</summary>
@@ -175,6 +194,7 @@
       <div id="voModeBox" class="chips"></div>
       <div id="voMicPanel" class="subpanel" style="margin-top:14px" hidden>
         <p class="muted note" style="margin:0 0 8px">Press <b>🎙 Record</b> on each scene, read the text, then press <b>■ Stop</b>. Scenes stretch to fit your voice. Silence at the start &amp; end is trimmed automatically.</p>
+        <p id="micOnlineNote" class="muted note" style="color:#fbbf24;margin:0 0 8px" hidden>Microphone recording isn't available in the online version. Use <b>Voice file</b> instead, or download the tool and open it on a computer.</p>
         <div id="voList" class="vo-list"></div>
       </div>
       <div id="voFilePanel" class="subpanel" style="margin-top:14px" hidden>
@@ -248,7 +268,7 @@
 
   <section>
     <div class="card sticky">
-      <h2>5. Preview &amp; create</h2>
+      <h2>Preview &amp; create</h2>
       <div class="stage"><canvas id="cv"></canvas></div>
       <div class="transport">
         <button id="playBtn" class="btn">▶ Preview</button>
@@ -269,6 +289,8 @@
     </div>
   </section>
 </main>
+<div id="toast" class="toast" role="status" hidden><span id="toastMsg"></span><button type="button" id="toastAct" class="btn small" hidden></button><button type="button" id="toastClose" class="btn small" aria-label="Close">×</button></div>
+<div id="mobileBar" class="mobile-bar" hidden><button type="button" id="mobileCreate" class="btn primary big">Create Video</button></div>
 
 <script>
 /* ===================== Options ===================== */
@@ -323,6 +345,57 @@ Creatures you *must* know:
 - Giant squid
 - Octopus
 Let's *protect* our oceans together!`;
+const EXAMPLES = [
+  {name:'Fun facts — Ocean', script:DEFAULT_SCRIPT},
+  {name:'Product launch', script:`# Meet the New SmartBottle
+Stay hydrated, the *smart* way
+It tracks every sip you take
+Battery lasts up to 30 days
+Why people love it:
+- Glows when it's time to drink
+- Keeps water cold for 24 hours
+- Syncs with your phone
+Pre-order today and save 20%`},
+  {name:'Tips list — Morning habits', script:`# 5 Habits for a Productive Morning
+Wake up at the *same time* every day
+Drink a glass of water first
+Your morning routine:
+- Make your bed
+- Move your body for 10 minutes
+- Plan your top 3 tasks
+Skip your phone for the first 30 minutes
+Small habits, *big* results`},
+  {name:'Business results', script:`# Q3 Results at a Glance
+Revenue grew 32% this quarter
+We reached 1.2 million customers
+Customer satisfaction hit 94%
+What drove our growth:
+- A brand new mobile app
+- Expansion into new cities
+- Faster delivery times
+Next goal: *2 million* customers next year`},
+  {name:'Event promo', script:`# Summer Music Festival
+Three days of *live* music
+Over 40 artists on 4 stages
+Don't miss:
+- Food trucks from around the world
+- Art and craft market
+- Fireworks every night
+Early bird tickets from $49
+Grab yours before they're gone!`},
+  {name:'Motivational quote', script:`# Monday Motivation
+Success is not *final*
+Failure is not *fatal*
+It is the *courage* to continue that counts
+Keep going — you've got this`},
+  {name:'Images demo (upload 2 images first)', script:`# Our New Look [image: 1, bounce, top, float]
+Fresh, bold and *simple* [image: 1, from-left, left]
+[image: 2, zoom, large]
+Why we changed:
+- [image: 1] Cleaner design
+- [image: 2] Easier to recognise
+Coming soon to every store [image: 2, full]`},
+];
 const OLD_DEFAULTS = {script:/^# 5 Fakta Menarik Tentang Malaysia/, outro:'Terima kasih kerana menonton!', handle:'@akaunanda'};
 
 const state = {
@@ -991,17 +1064,17 @@ async function ensureFonts(){
   try{ await Promise.race([Promise.all([document.fonts.load(fontStr(80,true),'Aa'),document.fonts.load(fontStr(80,false),'Aa')]), new Promise(r=>setTimeout(r,2500))]); }catch(e){}
   P.scenes.forEach(s=>s._c=null);
 }
-function setBusy(b){ $('#controls').disabled=b; $('#createBtn').disabled=b; $('#scrub').disabled=b; }
+function setBusy(b){ $('#controls').disabled=b; $('#createBtn').disabled=b; $('#mobileCreate').disabled=b; $('#scrub').disabled=b; }
 
 async function start(record){
   if(run) return;
   parseScript(); applyDims(); await ensureFonts();
-  if(!P.scenes.length){ alert('Please write a script first.'); return; }
+  if(!P.scenes.length){ notify('Please write a script first.'); return; }
   const total=P.total, audio=createAudio(total);
   let rec=null, chunks=[], mime='';
   if(record){
     mime=pickMime();
-    if(!mime || !cv.captureStream){ audio&&audio.close(); alert('This browser cannot record video. Please use the latest Google Chrome or Microsoft Edge.'); return; }
+    if(!mime || !cv.captureStream){ audio&&audio.close(); notify('This browser cannot record video. Please use the latest Google Chrome or Microsoft Edge.'); return; }
     const stream=cv.captureStream(30);
     if(audio) audio.dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
     rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:state.quality==='1080'?8e6:5e6, audioBitsPerSecond:160000});
@@ -1033,7 +1106,7 @@ async function start(record){
       const blob=new Blob(chunks,{type:mime.split(';')[0]}), url=URL.createObjectURL(blob);
       const ext=mime.includes('mp4')?'mp4':'webm';
       const v=$('#result video'); if(v.src) URL.revokeObjectURL(v.src); v.src=url;
-      const a=$('#dl'); a.href=url; a.download=`video-grafik-${state.format.replace(':','x')}-${Date.now()}.${ext}`;
+      const a=$('#dl'); a.href=url; a.download=`video-${state.format.replace(':','x')}-${Date.now()}.${ext}`;
       $('#resultInfo').textContent=`${W}×${H} · ${fmtTime(total)} · ${(blob.size/1048576).toFixed(1)} MB · ${ext.toUpperCase()}`+(ext==='webm'?' — can be uploaded straight to YouTube/TikTok, or converted to MP4 if needed.':'');
       $('#result').hidden=false;
     }
@@ -1075,6 +1148,52 @@ function refresh(){
   let t=+sc.value; if(t>P.total) t=0;
   if(!run){ sc.value=t; $('#time').textContent=`${fmtTime(t)} / ${fmtTime(P.total)}`; drawFrame(t || Math.min(1.5,P.total)); }
 }
+
+/* ----- In-page messages (pop-up alerts are blocked in the online version) ----- */
+let toastTimer=null, toastAction=null;
+function notify(msg,opt={}){
+  $('#toastMsg').textContent=msg;
+  const act=$('#toastAct'); toastAction=opt.action||null; act.hidden=!opt.action; act.textContent=opt.label||'';
+  $('#toast').hidden=false; clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ $('#toast').hidden=true; }, opt.ms||(opt.action?8000:6000));
+}
+$('#toastClose').addEventListener('click',()=>{ $('#toast').hidden=true; });
+$('#toastAct').addEventListener('click',()=>{ $('#toast').hidden=true; toastAction&&toastAction(); });
+
+/* ----- Online (claude.ai) support: save files through the page's downloads capability ----- */
+const ONLINE = !!(window.claude && typeof window.claude.use==='function');
+let downloadsApi=null;
+if(ONLINE){ try{ window.claude.use('downloads').then(d=>{ downloadsApi=d; }).catch(()=>{}); }catch(e){} }
+$('#dl').addEventListener('click',async e=>{
+  if(!downloadsApi) return; // normal browser download
+  e.preventDefault();
+  try{
+    const blob=await (await fetch($('#dl').href)).blob();
+    await downloadsApi.save({filename:$('#dl').download, data:blob});
+    notify('Video saved.');
+  }catch(err){
+    const c=err&&err.code;
+    if(c==='declined') return;
+    if(c==='host_unavailable') notify('This app can\'t save files. Open this page in a browser to download the video.');
+    else if(c==='rate_limited') notify('Another save is still open — try again in a moment.');
+    else notify('The video could not be saved here. Try opening this page in a browser.');
+  }
+});
+if(ONLINE) $('#micOnlineNote').hidden=false;
+
+/* ----- Example scripts ----- */
+$('#exampleSel').insertAdjacentHTML('beforeend',EXAMPLES.map((x,i)=>`<option value="${i}">${esc(x.name)}</option>`).join(''));
+$('#exampleSel').addEventListener('change',e=>{
+  const ex=EXAMPLES[+e.target.value]; e.target.value=''; if(!ex) return;
+  const prev=state.script;
+  state.script=ex.script; $('#script').value=ex.script; refresh();
+  if(prev.trim() && prev!==ex.script) notify(`Loaded "${ex.name}".`,{label:'Undo',action:()=>{ state.script=prev; $('#script').value=prev; refresh(); }});
+});
+// on phones, show the bottom Create bar only when the main button is scrolled out of view
+if('IntersectionObserver' in window){
+  new IntersectionObserver(([en])=>{ $('#mobileBar').hidden=en.isIntersecting; }).observe($('#createBtn'));
+}
+$('#mobileCreate').addEventListener('click',()=>{ window.scrollTo({top:0,behavior:'smooth'}); $('#createBtn').click(); });
 
 renderGroups();
 document.addEventListener('click',e=>{
@@ -1184,7 +1303,7 @@ async function setMusic(file, persist){
   try{
     musicBuf=await decodeMusic(file); musicName=file.name||'music';
     if(persist) idb.set('music',{name:musicName, blob:file});
-  }catch(e){ musicBuf=null; alert('This music file could not be read. Try MP3 or WAV.'); }
+  }catch(e){ musicBuf=null; notify('This music file could not be read. Try MP3 or WAV.'); }
   syncMusicPanel();
 }
 $('#musicFile').addEventListener('change',e=>{ setMusic(e.target.files[0],true); e.target.value=''; });
@@ -1288,13 +1407,13 @@ async function toggleRecord(i){
   if(voRec){ const same=voRec.key===s.voKey; voRec.rec.stop(); if(same) return; await new Promise(r=>setTimeout(r,200)); }
   let stream;
   try{ stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
-  catch(e){ alert('Could not use the microphone. Allow microphone access for this page in your browser settings.\n\nIf you opened the file directly from your computer and it still fails, open the tool through an https link.'); return; }
+  catch(e){ notify(ONLINE ? 'Recording from the microphone isn\'t available in the online version. Use "Voice file" instead, or download the tool and open it on a computer.' : 'Could not use the microphone. Allow microphone access for this page in your browser settings.'); return; }
   const rec=new MediaRecorder(stream), chunks=[], key=s.voKey;
   rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
   rec.onstop=async()=>{
     stream.getTracks().forEach(t=>t.stop()); clearInterval(voRec&&voRec.timer); voRec=null;
     const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
-    try{ const c=await makeClip(blob); voClips.set(key,c); idb.set(key,blob); }catch(e){ alert('The recording could not be read. Please try again.'); }
+    try{ const c=await makeClip(blob); voClips.set(key,c); idb.set(key,blob); }catch(e){ notify('The recording could not be read. Please try again.'); }
     refresh();
   };
   rec.start();
@@ -1319,7 +1438,7 @@ function syncVoPanel(){
 async function setVoFile(file,persist){
   if(!file) return; $('#voText').textContent='Processing voice…';
   try{ voFile={name:file.name||'voice',...await makeClip(file)}; if(persist) idb.set('voFile',{name:voFile.name,blob:file}); }
-  catch(e){ voFile=null; alert('This voice file could not be read. Try MP3 or WAV.'); }
+  catch(e){ voFile=null; notify('This voice file could not be read. Try MP3 or WAV.'); }
   syncVoPanel(); refresh();
 }
 $('#voFile').addEventListener('change',e=>{ setVoFile(e.target.files[0],true); e.target.value=''; });
