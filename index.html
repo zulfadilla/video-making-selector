@@ -94,6 +94,22 @@
   .thumb .tact button:hover{background:#262c3a}
   .thumb .tact button:disabled{opacity:.3;cursor:default}
   .thumb .tact button[data-act=del]{color:#f87171}
+  .thumb .tact button[data-act=ins]{flex:2;color:var(--brand2);font-size:12px;font-weight:600}
+  .thumb .name{display:block;font-size:11px;padding:3px 6px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid var(--line)}
+  .simg img{object-fit:contain;background:repeating-conic-gradient(#20242f 0 25%,#181b24 0 50%) 0 0/12px 12px}
+  .subsec{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .subsec h3{margin:0 0 10px;font-size:14px}
+  .small{font-size:12px}
+  .note code{background:var(--panel2);padding:1px 5px;border-radius:5px;color:var(--brand2)}
+  .vo-list{display:flex;flex-direction:column}
+  .vo-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+  .vo-row:first-child{border-top:0}
+  .vo-n{font-weight:700;color:var(--muted);font-size:13px}
+  .vo-t{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vo-t small{display:block;color:var(--muted);font-size:11px}
+  .vo-act{display:flex;gap:6px;align-items:center}
+  .btn.rec{background:#dc2626;border-color:#dc2626;color:#fff}
+  .btn.has{border-color:#2f6f57;color:var(--ok)}
 </style>
 </head>
 <body>
@@ -105,7 +121,12 @@
 <main class="app">
   <fieldset id="controls">
     <div class="card">
-      <div class="card-h"><h2>1. Skrip</h2><span id="sceneInfo" class="muted"></span></div>
+      <div class="card-h"><h2>1. Panjang video</h2><span id="lenInfo" class="muted"></span></div>
+      <div id="lengthBox" class="chips"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><h2>2. Skrip</h2><span id="sceneInfo" class="muted"></span></div>
       <textarea id="script" spellcheck="false"></textarea>
       <details class="help">
         <summary>Cara tulis skrip</summary>
@@ -116,13 +137,61 @@
           <li><code>*perkataan*</code> → ditonjolkan dengan warna aksen.</li>
           <li>Baris pendek ada nombor (<code>60%</code>, <code>RM 5,000</code>, <code>33 juta</code>) → nombor dikira naik secara animasi.</li>
           <li>Baris kosong memisahkan senarai.</li>
+          <li><code>[gambar: logo, pop, kiri]</code> → gambar muncul dalam babak (lihat "Gambar dalam babak" di bawah).</li>
+          <li>Baris dengan gambar sahaja → babak gambar penuh. <code>- [gambar: ikon] Item</code> → ikon ganti bulatan senarai.</li>
         </ul>
       </details>
       <div id="sceneList" class="scene-list"></div>
+
+      <div class="subsec">
+        <div class="card-h"><h3>Gambar dalam babak</h3><span class="muted small">muncul &amp; bergerak seperti teks</span></div>
+        <label class="drop" id="simgDrop">
+          <input type="file" id="simgFile" accept="image/*" multiple hidden>
+          <span id="simgText">Klik atau seret gambar / logo / ikon ke sini (PNG lutsinar pun boleh)</span>
+        </label>
+        <div id="simgList" class="img-list"></div>
+        <div id="simgOpts" hidden>
+          <div class="subrow">
+            <label class="tog">Animasi <select id="simgAnim">
+              <option value="pop">Pop</option><option value="pudar">Pudar</option><option value="zum">Zum</option>
+              <option value="dari-kiri">Dari kiri</option><option value="dari-kanan">Dari kanan</option>
+              <option value="dari-atas">Dari atas</option><option value="dari-bawah">Dari bawah</option>
+              <option value="putar">Putar</option><option value="lantun">Lantun</option></select></label>
+            <label class="tog">Posisi <select id="simgPos">
+              <option value="tengah">Tengah</option><option value="atas">Atas teks</option><option value="bawah">Bawah teks</option>
+              <option value="kiri">Kiri</option><option value="kanan">Kanan</option><option value="penuh">Penuh skrin</option></select></label>
+            <label class="tog">Saiz <select id="simgSize">
+              <option value="kecil">Kecil</option><option value="sederhana" selected>Sederhana</option><option value="besar">Besar</option></select></label>
+            <label class="tog">Gerakan <select id="simgMove">
+              <option value="">Tiada</option><option value="terapung">Terapung</option><option value="goyang">Goyang</option><option value="pusing">Pusing</option></select></label>
+          </div>
+          <p class="muted note">Letak kursor dalam skrip, kemudian klik <b>+ Sisip</b> pada gambar. Arahan boleh diubah terus dalam skrip, contoh <code>[gambar: logo, lantun, kanan, besar, terapung, 1s]</code> — <code>1s</code> = muncul selepas 1 saat.</p>
+        </div>
+      </div>
     </div>
 
     <div class="card">
-      <h2>2. Pilih gaya</h2>
+      <h2>3. Suara latar (voiceover)</h2>
+      <div id="voModeBox" class="chips"></div>
+      <div id="voMicPanel" class="subpanel" style="margin-top:14px" hidden>
+        <p class="muted note" style="margin:0 0 8px">Tekan <b>🎙 Rakam</b> pada setiap babak, baca teksnya, kemudian tekan <b>■ Henti</b>. Babak akan dipanjangkan ikut suara anda. Senyap di awal &amp; hujung dipotong automatik.</p>
+        <div id="voList" class="vo-list"></div>
+      </div>
+      <div id="voFilePanel" class="subpanel" style="margin-top:14px" hidden>
+        <label class="drop" id="voDrop">
+          <input type="file" id="voFile" accept="audio/*" hidden>
+          <span id="voText">Klik atau seret fail suara (MP3 / WAV / M4A)</span>
+        </label>
+        <div class="subrow">
+          <label class="tog"><input type="checkbox" id="voFit"> Panjang video ikut panjang suara (bila Panjang video = Auto)</label>
+          <button type="button" class="btn small" id="voClear" hidden>Buang suara</button>
+        </div>
+      </div>
+      <p class="muted note" style="margin:12px 0 0">Muzik latar diperlahankan automatik semasa ada suara. Suara robot pelayar tidak boleh dirakam ke dalam fail video — untuk suara AI, jana MP3 di laman text-to-speech (contoh ElevenLabs, CapCut) dan guna <b>Fail suara</b>.</p>
+    </div>
+
+    <div class="card">
+      <h2>4. Pilih gaya</h2>
       <div id="groups"></div>
       <div id="bgPanel" class="subpanel">
         <div data-show="color" class="subrow">
@@ -180,7 +249,7 @@
 
   <section>
     <div class="card sticky">
-      <h2>3. Pratonton &amp; hasilkan</h2>
+      <h2>5. Pratonton &amp; hasilkan</h2>
       <div class="stage"><canvas id="cv"></canvas></div>
       <div class="transport">
         <button id="playBtn" class="btn">▶ Pratonton</button>
@@ -229,10 +298,11 @@ const GROUPS = [
   {key:'bg',     label:'Hiasan latar', opts:[['gradient','Gradien'],['particles','Partikel'],['grid','Grid'],['shapes','Bentuk'],['solid','Kosong']]},
   {key:'trans',  label:'Peralihan babak', opts:[['fade','Pudar'],['wipe','Sapuan'],['slide','Luncur'],['zoom','Zum']]},
   {key:'speed',  label:'Kelajuan', opts:[['slow','Perlahan'],['normal','Sederhana'],['fast','Laju']]},
-  {key:'length', label:'Panjang video', opts:[['auto','Auto','ikut skrip'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]},
   {key:'music',  label:'Muzik latar', opts:[['none','Tiada'],['chill','Chill'],['upbeat','Upbeat'],['custom','Muzik sendiri']]},
   {key:'quality',label:'Kualiti', opts:[['720','720p','lebih cepat'],['1080','1080p','HD']]},
 ];
+const LENGTH_GROUP = {key:'length', opts:[['auto','Auto','ikut skrip'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]};
+const VO_GROUP = {key:'voMode', opts:[['none','Tiada'],['mic','Rakam suara sendiri','setiap babak'],['file','Fail suara','MP3 / WAV']]};
 const DEFAULT_SCRIPT = `# 5 Fakta Menarik Tentang Malaysia
 Malaysia mempunyai lebih 33 juta penduduk
 Kira-kira 55% tanah Malaysia dilitupi hutan
@@ -247,7 +317,7 @@ const state = {
   music:'chill', quality:'1080', sfx:true, progress:true, stats:true, customAccent:false, accent:'#00e5ff',
   outro:'Terima kasih kerana menonton!', handle:'@akaunanda', script:DEFAULT_SCRIPT,
   bgMode:'theme', bgColor1:'#1e3a8a', bgColor2:'#7c3aed', overlay:0.45, overlayTone:'dark', kenburns:true,
-  imgMode:'scene', length:'auto', musicVol:0.8, musicLoop:true, musicOffset:0,
+  imgMode:'scene', length:'auto', musicVol:0.8, musicLoop:true, musicOffset:0, voMode:'none', voFit:true,
 };
 const MAX_LEN = 120; // had panjang video (saat)
 try { Object.assign(state, JSON.parse(localStorage.getItem('pvg-state')||'{}')); } catch(e){}
@@ -255,6 +325,9 @@ const save = () => { try { localStorage.setItem('pvg-state', JSON.stringify(stat
 let bgImgs = [];     // gambar latar sendiri: [{img, blob}] ikut turutan
 let musicBuf = null; // muzik sendiri (AudioBuffer)
 let musicName = '';
+let sceneImgs = [];       // gambar dalam babak: [{name, blob, img, opaque}]
+const voClips = new Map(); // suara setiap babak: key -> {blob, buf, off, dur}
+let voFile = null;        // fail suara penuh: {name, blob, buf, off, dur}
 
 /* Simpanan fail besar (gambar, muzik) dalam IndexedDB pelayar */
 const idb = (() => {
@@ -265,6 +338,7 @@ const idb = (() => {
     get:k=>tx('readonly',s=>s.get(k)).catch(()=>undefined),
     set:(k,v)=>tx('readwrite',s=>s.put(v,k)).catch(()=>{}),
     del:k=>tx('readwrite',s=>s.delete(k)).catch(()=>{}),
+    keys:()=>tx('readonly',s=>s.getAllKeys()).catch(()=>[]),
   };
 })();
 
@@ -274,6 +348,8 @@ const clamp = (v,a=0,b=1) => Math.max(a,Math.min(b,v));
 const easeOutCubic = x => 1-Math.pow(1-x,3);
 const easeInCubic = x => x*x*x;
 const easeInOutCubic = x => x<.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2;
+const easeOutBounce = x => { const n=7.5625,d=2.75; if(x<1/d) return n*x*x; if(x<2/d) return n*(x-=1.5/d)*x+.75; if(x<2.5/d) return n*(x-=2.25/d)*x+.9375; return n*(x-=2.625/d)*x+.984375; };
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const easeOutBack = x => { const c1=1.70158,c3=c1+1; return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2); };
 const wc = s => s.replace(/\*/g,'').split(/\s+/).filter(Boolean).length;
 function hexA(hex,a){ const h=hex.replace('#',''); const n=parseInt(h.length===3?h.replace(/./g,c=>c+c):h,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
@@ -332,6 +408,35 @@ function fmtNum(v,st){
   return tr(st.prefix + s + st.suffix);
 }
 let P = {scenes:[], total:0, autoTotal:0, imgSegs:[]};
+/* Arahan gambar dalam skrip: [gambar: nama, animasi, posisi, saiz, gerakan, 1s] */
+const IMG_TAG=/\[(?:gambar|img|image)\s*:?\s*([^\]]*)\]/gi;
+const IMG_ANIM={pop:'pop',pudar:'pudar',fade:'pudar',zum:'zum',zoom:'zum','dari-kiri':'dari-kiri','dari-kanan':'dari-kanan','dari-atas':'dari-atas','dari-bawah':'dari-bawah',naik:'dari-bawah',turun:'dari-atas',putar:'putar',lantun:'lantun'};
+const IMG_POS=new Set(['tengah','atas','bawah','kiri','kanan','penuh']);
+const IMG_SIZE=new Set(['kecil','sederhana','besar']);
+const IMG_MOVE=new Set(['terapung','goyang','pusing']);
+const IMG_WORDS=new Set([...Object.keys(IMG_ANIM),...IMG_POS,...IMG_SIZE,...IMG_MOVE]);
+function parseImgArgs(args){
+  const im={name:'',anim:'pop',pos:'tengah',size:null,delay:null,moves:[]};
+  for(const tok of args.toLowerCase().split(/[,\s]+/).filter(Boolean)){
+    if(IMG_ANIM[tok]) im.anim=IMG_ANIM[tok];
+    else if(IMG_POS.has(tok)) im.pos=tok;
+    else if(IMG_SIZE.has(tok)) im.size=tok;
+    else if(IMG_MOVE.has(tok)) im.moves.push(tok);
+    else if(/^\d+(\.\d+)?s$/.test(tok)) im.delay=parseFloat(tok);
+    else if(!im.name) im.name=tok;
+  }
+  return im;
+}
+function extractImgs(line){
+  const imgs=[];
+  const text=line.replace(IMG_TAG,(m,a)=>{ imgs.push(parseImgArgs(a)); return ' '; }).replace(/\s+/g,' ').trim();
+  return {text,imgs};
+}
+function findSceneImg(name){
+  if(!name) return null;
+  if(/^\d+$/.test(name)) return sceneImgs[+name-1]||null;
+  return sceneImgs.find(x=>x.name===name)||null;
+}
 function parseScript(){
   const scenes=[]; let list=null;
   const flush=()=>{ if(list){ scenes.push(list); list=null; } };
@@ -341,19 +446,22 @@ function parseScript(){
     const b = l.match(/^[-•]\s+(.*)$/) || l.match(/^\*\s+(.*)$/);
     if(b){
       if(!list){
-        let heading=''; const prev=scenes[scenes.length-1];
-        if(prev && prev.type==='text' && /:$/.test(prev.text)){ scenes.pop(); heading=prev.text.replace(/:$/,''); }
-        list={type:'list', heading, items:[]};
+        let heading='', hraw=''; const prev=scenes[scenes.length-1];
+        if(prev && prev.type==='text' && /:$/.test(prev.text)){ scenes.pop(); heading=prev.text.replace(/:$/,''); hraw=prev.raw; }
+        list={type:'list', heading, items:[], itemImgs:[], raw:[hraw]};
       }
-      list.items.push(b[1]); continue;
+      const ex=extractImgs(b[1]); list.items.push(ex.text); list.itemImgs.push(ex.imgs); list.raw.push(b[1]); continue;
     }
     flush();
-    if(l.startsWith('#')){ scenes.push({type:'title', text:l.replace(/^#+\s*/,'')}); continue; }
-    const st = state.stats ? findStat(l) : null;
-    scenes.push(st ? {type:'stat', text:l, stat:st} : {type:'text', text:l});
+    if(l.startsWith('#')){ const ex=extractImgs(l.replace(/^#+\s*/,'')); scenes.push({type:ex.text?'title':'image', text:ex.text, imgs:ex.imgs, raw:l}); continue; }
+    const ex=extractImgs(l);
+    if(!ex.text){ scenes.push({type:'image', text:'', imgs:ex.imgs, raw:l}); continue; }
+    const st = state.stats ? findStat(ex.text) : null;
+    scenes.push(st ? {type:'stat', text:ex.text, stat:st, imgs:ex.imgs, raw:l} : {type:'text', text:ex.text, imgs:ex.imgs, raw:l});
   }
   flush();
-  if(state.outro.trim()) scenes.push({type:'outro', text:state.outro.trim()});
+  if(state.outro.trim()) scenes.push({type:'outro', text:state.outro.trim(), raw:'outro|'+state.outro.trim()});
+  for(const s of scenes) s.voKey='vo:'+(s.type==='list' ? s.raw.join('|') : s.raw);
   const sp = {slow:1.3, normal:1, fast:0.75}[state.speed];
   let t=0;
   for(const s of scenes){
@@ -365,16 +473,25 @@ function parseScript(){
     } else if(s.type==='stat') d = 2.6 + wc(s.text)*0.3;
     else if(s.type==='title') d = 2.2 + wc(s.text)*0.3;
     else if(s.type==='outro') d = 3.4;
+    else if(s.type==='image') d = 2.4 + s.imgs.length*.3;
     else d = 1.6 + wc(s.text)*0.32;
     if(state.anim==='type' && s.type!=='list') d = Math.max(d, s.text.length/26 + 1.6);
-    s.dur = Math.max(2.2, d*sp); s.start=t; t+=s.dur;
+    s.dur = Math.max(2.2, d*sp);
+    const clip = state.voMode==='mic' ? voClips.get(s.voKey) : null;
+    s.voice = clip||null; s.voMin = clip ? clip.dur+.35+.55 : 0;  // suara mula 0.35s selepas babak bermula
+    s.dur = Math.max(s.dur, s.voMin); s.start=t; t+=s.dur;
   }
   // panjang video: auto (maks 2 min) atau tetap — skala semua babak
   const autoTotal=t;
-  const target = state.length==='auto' ? Math.min(t,MAX_LEN) : Math.min(+state.length,MAX_LEN);
+  let target = state.length==='auto' ? Math.min(t,MAX_LEN) : Math.min(+state.length,MAX_LEN);
+  if(state.voMode==='file' && voFile && state.voFit && state.length==='auto') target=Math.min(voFile.dur+.8,MAX_LEN);
   if(scenes.length && Math.abs(target-t)>.01){
-    const f=target/t; t=0;
-    for(const s of scenes){ s.dur*=f; s.start=t; t+=s.dur; if(s.itemTimes) s.itemTimes=s.itemTimes.map(x=>x*f); }
+    // babak yang ada suara tidak dipendekkan kurang daripada panjang suara
+    const fixed=scenes.reduce((a,s)=>a+(s.voMin?s.voMin:0),0);
+    let f=target/t;
+    for(let k=0;k<6;k++){ const tot=scenes.reduce((a,s)=>a+Math.max(s.dur*f,s.voMin),0); if(Math.abs(tot-target)<.05||tot<=fixed) break; f*=target/tot; }
+    t=0;
+    for(const s of scenes){ const nd=Math.max(s.dur*f,s.voMin); if(s.itemTimes) s.itemTimes=s.itemTimes.map(x=>x*nd/s.dur); s.dur=nd; s.start=t; t+=s.dur; }
   }
   // segmen gambar latar
   const imgSegs=[], n=bgImgs.length;
@@ -531,15 +648,99 @@ function drawBg(t){
 const ANIMS=['pop','fade','slide','type','zoom'];
 const animFor = idx => state.anim==='random' ? ANIMS[(idx*3+1)%ANIMS.length] : state.anim;
 
-function drawScene(s,lt,idx){
-  const th=theme(), u=U(), cx=W/2, cy=H/2, mode=animFor(idx);
+/* ===================== Gambar dalam babak ===================== */
+function sceneBoxes(s){
+  const full={cx:W/2,cy:H/2,w:W,h:H}, imgs=s.imgs||[];
+  if(!imgs.length || s.type==='list') return {text:full,img:null};
+  if(s.type==='image') return {text:null,img:{cx:W/2,cy:H/2,w:W*.86,h:H*.78}};
+  let p=imgs[0].pos;
+  if(p==='penuh') return {text:full,img:{full:true}};
+  if(p==='tengah') p='atas';
+  if(H>W*1.1 && (p==='kiri'||p==='kanan')) p = p==='kiri'?'atas':'bawah'; // skrin menegak: tiada ruang sisi
+  if(p==='atas')  return {img:{cx:W/2,cy:H*.29,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.72,w:W,h:H*.48}};
+  if(p==='bawah') return {img:{cx:W/2,cy:H*.71,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.28,w:W,h:H*.48}};
+  if(p==='kiri')  return {img:{cx:W*.27,cy:H/2,w:W*.4,h:H*.72}, text:{cx:W*.69,cy:H/2,w:W*.6,h:H}};
+  return {img:{cx:W*.73,cy:H/2,w:W*.4,h:H*.72}, text:{cx:W*.31,cy:H/2,w:W*.6,h:H}};
+}
+function imgMotion(im,lt,t,i){
+  // animasi masuk + gerakan berterusan
+  const d=im.delay??i*.15, dur=im.anim==='lantun'?.9:.6, q=clamp((lt-d)/dur), e=easeOutCubic(q), u=U();
+  const m={q,a:1,dx:0,dy:0,sc:1,rot:0};
+  switch(im.anim){
+    case 'pop': m.sc=easeOutBack(q); m.a=clamp(q*3); break;
+    case 'pudar': m.a=e; break;
+    case 'zum': m.sc=1.5-.5*e; m.a=e; break;
+    case 'dari-kiri': m.dx=-(1-e)*W*.6; m.a=clamp(q*2); break;
+    case 'dari-kanan': m.dx=(1-e)*W*.6; m.a=clamp(q*2); break;
+    case 'dari-atas': m.dy=-(1-e)*H*.4; m.a=clamp(q*2); break;
+    case 'dari-bawah': m.dy=(1-e)*H*.4; m.a=clamp(q*2); break;
+    case 'putar': m.rot=-(1-easeOutBack(q))*Math.PI; m.sc=e; m.a=clamp(q*2); break;
+    case 'lantun': m.dy=-(1-easeOutBounce(q))*H*.5; m.a=clamp(q*4); break;
+  }
+  if(im.moves.includes('terapung')) m.dy+=Math.sin(t*2.2+i*1.3)*14*u;
+  if(im.moves.includes('goyang')) m.rot+=Math.sin(t*4+i)*.07;
+  if(im.moves.includes('pusing')) m.rot+=Math.max(0,lt-d)*1.2;
+  return m;
+}
+function drawImgBox(rec,w,h,name){
+  const u=U();
+  if(!rec){
+    ctx.setLineDash([14*u,10*u]); ctx.lineWidth=4*u; ctx.strokeStyle=hexA(theme().text,.6);
+    roundRect(-w/2,-h/2,w,h,18*u); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font=fontStr(Math.max(16,30*u),false); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=hexA(theme().text,.8);
+    ctx.fillText(`gambar "${name||'?'}" tiada`,0,0); return;
+  }
+  if(rec.opaque){
+    const r=Math.min(w,h)*.05;
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=30*u; ctx.shadowOffsetY=10*u; ctx.fillStyle='#000'; roundRect(-w/2,-h/2,w,h,r); ctx.fill(); ctx.restore();
+    ctx.save(); roundRect(-w/2,-h/2,w,h,r); ctx.clip(); ctx.drawImage(rec.img,-w/2,-h/2,w,h); ctx.restore();
+  } else {
+    ctx.save(); ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=24*u; ctx.shadowOffsetY=8*u; ctx.drawImage(rec.img,-w/2,-h/2,w,h); ctx.restore();
+  }
+}
+function drawSceneImg(im,slot,lt,t,i,stype){
+  const rec=findSceneImg(im.name), m=imgMotion(im,lt,t,i);
+  if(m.q<=0) return;
+  const sz={kecil:.5,sederhana:.78,besar:1}[im.size||(stype==='image'?'besar':'sederhana')];
+  let w=slot.w*.6*sz, h=slot.h*.6*sz;
+  if(rec){ const r=Math.min(slot.w/rec.img.naturalWidth,slot.h/rec.img.naturalHeight)*sz; w=rec.img.naturalWidth*r; h=rec.img.naturalHeight*r; }
+  ctx.save(); ctx.globalAlpha*=m.a; ctx.translate(slot.cx+m.dx,slot.cy+m.dy); ctx.rotate(m.rot); ctx.scale(m.sc,m.sc);
+  drawImgBox(rec,w,h,im.name); ctx.restore();
+}
+function drawFullImg(im,lt,t){
+  const rec=findSceneImg(im.name); if(!rec) return;
+  const th=theme(), a=easeOutCubic(clamp((lt-(im.delay||0))/.6)); if(a<=0) return;
+  const iw=rec.img.naturalWidth, ih=rec.img.naturalHeight, z=1.04+.04*Math.sin(t*.3);
+  const sc=Math.max(W/iw,H/ih)*z, dw=iw*sc, dh=ih*sc;
+  ctx.save(); ctx.globalAlpha*=a; ctx.drawImage(rec.img,(W-dw)/2,(H-dh)/2,dw,dh);
+  ctx.fillStyle=th.dark?'rgba(0,0,0,.5)':'rgba(255,255,255,.6)'; ctx.fillRect(0,0,W,H); ctx.restore();
+}
+function drawIcon(im,x,y,size,q){
+  const rec=findSceneImg(im.name); if(q<=0) return;
+  ctx.save(); ctx.translate(x,y); ctx.scale(q,q);
+  if(rec){ const r=Math.min(size/rec.img.naturalWidth,size/rec.img.naturalHeight); drawImgBox(rec,rec.img.naturalWidth*r,rec.img.naturalHeight*r,im.name); }
+  else { ctx.fillStyle=theme().accent; ctx.beginPath(); ctx.arc(0,0,size*.2,0,7); ctx.fill(); }
+  ctx.restore();
+}
+function drawScene(s,lt,idx,t){
+  const bx=cached(s,'box',()=>sceneBoxes(s)), imgs=s.type==='list'?[]:(s.imgs||[]);
+  if(bx.img && bx.img.full) imgs.forEach(im=>drawFullImg(im,lt,t));
+  else if(bx.img){
+    const n=imgs.length, sw=bx.img.w/n;
+    imgs.forEach((im,i)=>drawSceneImg(im,{cx:bx.img.cx-bx.img.w/2+sw*(i+.5),cy:bx.img.cy,w:sw*.92,h:bx.img.h},lt,t,i,s.type));
+  }
+  if(bx.text) drawSceneText(s,lt,idx,bx.text);
+}
+
+function drawSceneText(s,lt,idx,bx){
+  const th=theme(), u=U(), cx=bx.cx, cy=bx.cy, mode=animFor(idx);
   const base={color:th.text, hi:th.accent, mode};
   if(s.type==='text'){
-    const L=cached(s,'m',()=>fitText(tokenize(tr(s.text)),96*u,true,W*.8,H*.6));
+    const L=cached(s,'m',()=>fitText(tokenize(tr(s.text)),96*u,true,bx.w*.8,bx.h*.6));
     drawWords(L,{...base,cx,cy,lt});
   }
   else if(s.type==='title'){
-    const L=cached(s,'m',()=>fitText(tokenize(tr(s.text)),136*u,true,W*.84,H*.55));
+    const L=cached(s,'m',()=>fitText(tokenize(tr(s.text)),136*u,true,bx.w*.84,bx.h*.55));
     const y=cy-24*u; drawWords(L,{...base,cx,cy:y,lt});
     const q=easeOutCubic(clamp((lt-.35)/.7)), bw=Math.min(L.maxLineW*.5,320*u)*q;
     if(bw>0){ ctx.fillStyle=th.accent; roundRect(cx-bw/2,y+L.height/2+30*u,bw,12*u,6*u); ctx.fill(); }
@@ -548,8 +749,8 @@ function drawScene(s,lt,idx){
     const st=s.stat;
     const lay=cached(s,'m',()=>{
       let ns=250*u; ctx.font=fontStr(ns,true);
-      while(ctx.measureText(fmtNum(st.value,st)).width>W*.86) { ns*=.93; ctx.font=fontStr(ns,true); }
-      const cap=fitText(tokenize(tr(s.text)),62*u,false,W*.78,H*.28);
+      while(ctx.measureText(fmtNum(st.value,st)).width>bx.w*.86) { ns*=.93; ctx.font=fontStr(ns,true); }
+      const cap=fitText(tokenize(tr(s.text)),62*u,false,bx.w*.78,bx.h*.28);
       const gap=34*u, total=ns+gap+cap.height, ny=cy-total/2+ns/2;
       return {ns,cap,ny,capY:ny+ns/2+gap+cap.height/2};
     });
@@ -563,13 +764,13 @@ function drawScene(s,lt,idx){
     const lay=cached(s,'m',()=>{
       let size=64*u, r;
       for(let k=0;k<30;k++){
-        const head=s.heading?layoutWords(tokenize(tr(s.heading)),size*1.15,true,W*.82,size*1.36):null;
-        const items=s.items.map(it=>layoutWords(tokenize(tr(it)),size,false,W*.7,size*1.2,'left'));
+        const head=s.heading?layoutWords(tokenize(tr(s.heading)),size*1.15,true,bx.w*.82,size*1.36):null;
+        const items=s.items.map(it=>layoutWords(tokenize(tr(it)),size,false,bx.w*.7,size*1.2,'left'));
         const gapI=size*.55, gapH=size*.9;
         const totalH=(head?head.height+gapH:0)+items.reduce((a,L)=>a+L.height,0)+gapI*(items.length-1);
         const blockW=Math.max(...items.map(L=>L.maxLineW))+size;
         r={size,head,items,gapI,gapH,totalH,blockW};
-        if(totalH<=H*.78 && blockW<=W*.88 && (!head||head.widest<=W*.82)) break;
+        if(totalH<=bx.h*.78 && blockW<=bx.w*.88 && (!head||head.widest<=bx.w*.82)) break;
         size*=.92;
       }
       return r;
@@ -581,7 +782,9 @@ function drawScene(s,lt,idx){
       const ilt=lt-s.itemTimes[i];
       if(ilt>0){
         const q=easeOutBack(clamp(ilt/.4));
-        ctx.fillStyle=th.accent; ctx.beginPath(); ctx.arc(left+lay.size*.3,y+lay.size*.6,Math.max(0,lay.size*.2*q),0,7); ctx.fill();
+        const ic=s.itemImgs && s.itemImgs[i] && s.itemImgs[i][0];
+        if(ic) drawIcon(ic,left+lay.size*.3,y+lay.size*.6,lay.size*1.05,q);
+        else { ctx.fillStyle=th.accent; ctx.beginPath(); ctx.arc(left+lay.size*.3,y+lay.size*.6,Math.max(0,lay.size*.2*q),0,7); ctx.fill(); }
         drawWords(L,{...base,mode:mode==='zoom'?'slide':mode,cx:left+lay.size,cy:y+L.height/2,lt:ilt});
       }
       y+=L.height+lay.gapI;
@@ -590,7 +793,7 @@ function drawScene(s,lt,idx){
   else if(s.type==='outro'){
     const handle=state.handle.trim();
     const lay=cached(s,'m',()=>{
-      const L=fitText(tokenize(tr(s.text)),112*u,true,W*.82,H*.42);
+      const L=fitText(tokenize(tr(s.text)),112*u,true,bx.w*.82,bx.h*.42);
       const ps=54*u; ctx.font=fontStr(ps,true);
       const pw=handle?ctx.measureText(tr(handle)).width+ps*1.4:0, ph=handle?ps*1.7:0, gap=handle?50*u:0;
       const total=L.height+gap+ph, ty=cy-total/2+L.height/2;
@@ -637,7 +840,7 @@ function drawFrame(t){
     ctx.globalAlpha=1-exitP;
   }
   if(th.shadow){ ctx.shadowColor='rgba(0,0,0,.3)'; ctx.shadowBlur=24*u; ctx.shadowOffsetY=4*u; }
-  drawScene(s,lt,idx);
+  drawScene(s,lt,idx,t);
   ctx.restore();
   if(state.trans==='wipe') drawWipe(t);
   const handle=state.handle.trim();
@@ -660,13 +863,21 @@ const CHORDS = {
 };
 function createAudio(total){
   const useCustom = state.music==='custom' && musicBuf;
-  if((state.music==='none' || (state.music==='custom' && !musicBuf)) && !state.sfx) return null;
+  const voiceScenes = state.voMode==='mic' ? P.scenes.filter(s=>s.voice) : [];
+  const voiceFile = state.voMode==='file' ? voFile : null;
+  const hasVoice = voiceScenes.length>0 || !!voiceFile;
+  const hasMusic = useCustom || state.music==='chill' || state.music==='upbeat';
+  if(!hasMusic && !state.sfx && !hasVoice) return null;
   const ac=new (window.AudioContext||window.webkitAudioContext)();
   const dest=ac.createMediaStreamDestination();
   const comp=ac.createDynamicsCompressor(), master=ac.createGain(), mus=ac.createGain();
   master.connect(comp); comp.connect(dest); comp.connect(ac.destination);
-  mus.gain.value=state.musicVol; mus.connect(master);
+  mus.connect(master);
+  const vog=ac.createGain(); vog.gain.value=1.1; vog.connect(master);
   const T0=ac.currentTime+.15;
+  const mv=state.musicVol*(hasVoice?.3:1); // muzik diperlahankan bila ada suara
+  mus.gain.setValueAtTime(mv,T0); mus.gain.setValueAtTime(mv,T0+Math.max(0,total-1.6)); mus.gain.linearRampToValueAtTime(0,T0+total);
+  if(voiceFile){ const src=ac.createBufferSource(); src.buffer=voiceFile.buf; src.connect(vog); src.start(T0+.1,voiceFile.off,Math.min(voiceFile.dur,total)); }
   if(useCustom){
     // muzik sendiri: main dari saat pilihan, ulang jika perlu
     const src=ac.createBufferSource(); src.buffer=musicBuf;
@@ -675,7 +886,7 @@ function createAudio(total){
     const g=ac.createGain(); g.gain.setValueAtTime(0,T0); g.gain.linearRampToValueAtTime(1,T0+.4);
     src.connect(g).connect(mus); src.start(T0,off); src.stop(T0+total+.1);
   }
-  master.gain.setValueAtTime(.8,T0); master.gain.setValueAtTime(.8,T0+Math.max(0,total-1.6)); master.gain.linearRampToValueAtTime(0,T0+total);
+  master.gain.value=.8;
   const nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate), nd=nb.getChannelData(0);
   for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
 
@@ -712,6 +923,7 @@ function createAudio(total){
     g.gain.setValueAtTime(0.0001,at); g.gain.linearRampToValueAtTime(.3,at+.3); g.gain.exponentialRampToValueAtTime(0.0001,at+.6);
     src.connect(f).connect(g).connect(master); src.start(at); src.stop(at+.65);
   }]));
+  voiceScenes.forEach(s=>events.push([s.start+.35,at=>{ const src=ac.createBufferSource(); src.buffer=s.voice.buf; src.connect(vog); src.start(at,s.voice.off,s.voice.dur); }]));
   events.sort((a,b)=>a[0]-b[0]);
   let ei=0;
   return {
@@ -786,22 +998,31 @@ async function start(record){
 function stop(){ if(!run) return; run.cancelled=true; cancelAnimationFrame(run.raf); run.resolve&&run.resolve(); }
 
 /* ===================== UI ===================== */
-function renderGroups(){
-  $('#groups').innerHTML=GROUPS.map(g=>`<div class="group"><div class="glabel">${g.label}</div><div class="chips">${g.opts.map(([v,label,sub])=>{
+function chipsHtml(g){
+  return g.opts.map(([v,label,sub])=>{
     let pre='', style='';
     if(g.key==='theme'){ const t=THEMES[v]; pre=`<span class="sw" style="background:linear-gradient(135deg,${t.bg[0]},${t.bg[1]})"><i style="background:${t.accent}"></i></span>`; }
     if(g.key==='font'){ style=` style="font-family:'${FONTS[v].family}';font-weight:${FONTS[v].bold}"`; }
     return `<button type="button" class="chip" data-key="${g.key}" data-val="${v}" aria-pressed="${state[g.key]===v}"${style}>${pre}${label}${sub?` <small>${sub}</small>`:''}</button>`;
-  }).join('')}</div></div>`).join('');
+  }).join('');
 }
-const LABEL={title:'Tajuk',text:'Teks',stat:'Nombor',list:'Senarai',outro:'Penutup'};
+function renderGroups(){
+  $('#groups').innerHTML=GROUPS.map(g=>`<div class="group"><div class="glabel">${g.label}</div><div class="chips">${chipsHtml(g)}</div></div>`).join('');
+  $('#lengthBox').innerHTML=chipsHtml(LENGTH_GROUP);
+  $('#voModeBox').innerHTML=chipsHtml(VO_GROUP);
+}
+const LABEL={title:'Tajuk',text:'Teks',stat:'Nombor',list:'Senarai',outro:'Penutup',image:'Gambar'};
 function refresh(){
   save(); parseScript(); applyDims();
   const avg=P.scenes.length?P.total/P.scenes.length:0;
   let info=`${P.scenes.length} babak · ${fmtTime(P.total)}`;
   if(state.length==='auto' && P.autoTotal>MAX_LEN) info+=' (dipendekkan ke had 2 min)';
+  if(P.total>MAX_LEN+.5) info+=' · ⚠ melebihi 2 min kerana suara';
+  const tgt=state.length==='auto'?null:+state.length;
+  $('#lenInfo').textContent = tgt && Math.abs(P.total-tgt)>.5 ? `jadi ${fmtTime(P.total)} — ikut panjang suara` : `video: ${fmtTime(P.total)}`;
   if(P.scenes.length && avg<1.6) info+=' · ⚠ babak terlalu laju — pilih panjang lebih lama';
   $('#sceneInfo').textContent=info;
+  renderVoList();
   $('#sceneList').innerHTML=P.scenes.map((s,i)=>`<span><b>${i+1}</b> ${LABEL[s.type]} · ${s.dur.toFixed(1)}s</span>`).join('');
   const sc=$('#scrub'); sc.max=P.total.toFixed(2);
   let t=+sc.value; if(t>P.total) t=0;
@@ -809,7 +1030,7 @@ function refresh(){
 }
 
 renderGroups();
-$('#groups').addEventListener('click',e=>{
+document.addEventListener('click',e=>{
   const b=e.target.closest('.chip'); if(!b) return;
   state[b.dataset.key]=b.dataset.val;
   document.querySelectorAll(`.chip[data-key="${b.dataset.key}"]`).forEach(c=>c.setAttribute('aria-pressed',c===b));
@@ -824,7 +1045,7 @@ function syncBgPanel(){
   bgPanel.querySelectorAll('[data-show]').forEach(el=>el.hidden = el.dataset.show!==state.bgMode);
   $('#overlayVal').textContent=Math.round(state.overlay*100)+'%';
 }
-$('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="bgMode"]')) syncBgPanel(); });
+document.addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="bgMode"]')) syncBgPanel(); });
 ['bgColor1','bgColor2'].forEach(k=>{ $('#'+k).value=state[k]; $('#'+k).addEventListener('input',e=>{ state[k]=e.target.value; refresh(); }); });
 $('#bgSame').addEventListener('click',()=>{ state.bgColor2=state.bgColor1; $('#bgColor2').value=state.bgColor1; refresh(); });
 $('#overlayTone').value=state.overlayTone;
@@ -927,7 +1148,138 @@ $('#musicLoop').checked=state.musicLoop;
 $('#musicLoop').addEventListener('change',e=>{ state.musicLoop=e.target.checked; save(); });
 $('#musicOffset').value=state.musicOffset;
 $('#musicOffset').addEventListener('input',e=>{ state.musicOffset=Math.max(0,+e.target.value||0); save(); });
-$('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="music"]')) syncMusicPanel(); });
+document.addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="music"]')) syncMusicPanel(); });
+
+/* ----- Gambar dalam babak ----- */
+function slugName(fname){
+  let b=fname.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gambar';
+  if(IMG_WORDS.has(b) || /^\d/.test(b)) b='gambar-'+b;
+  let n=b,k=2; while(sceneImgs.some(x=>x.name===n)) n=b+'-'+(k++);
+  return n;
+}
+function isOpaque(img){
+  const c=document.createElement('canvas'); c.width=c.height=24; const x=c.getContext('2d'); x.drawImage(img,0,0,24,24);
+  const d=x.getImageData(0,0,24,24).data; for(let i=3;i<d.length;i+=4) if(d[i]<250) return false; return true;
+}
+async function shrinkSceneImage(file){
+  const src=await blobToImage(file), keepPng=/png|webp|gif|svg/.test(file.type);
+  const k=Math.min(1,1600/Math.max(src.naturalWidth,src.naturalHeight));
+  const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(src.naturalWidth*k)); c.height=Math.max(1,Math.round(src.naturalHeight*k));
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height); URL.revokeObjectURL(src.src);
+  return new Promise(res=>c.toBlob(res,keepPng?'image/png':'image/jpeg',.9));
+}
+const persistSceneImgs = () => idb.set('sceneImages', sceneImgs.map(x=>({name:x.name,blob:x.blob})));
+async function addSceneImgs(files){
+  const list=[...files].filter(f=>f.type.startsWith('image/')); if(!list.length) return;
+  $('#simgText').textContent='Memproses gambar…';
+  for(const f of list){ try{ const blob=await shrinkSceneImage(f), img=await blobToImage(blob); sceneImgs.push({name:slugName(f.name),blob,img,opaque:isOpaque(img)}); }catch(e){} }
+  persistSceneImgs(); renderSceneImgs(); refresh();
+}
+function renderSceneImgs(){
+  $('#simgList').innerHTML=sceneImgs.map((x,i)=>`<div class="thumb simg" data-i="${i}" title="[gambar: ${x.name}]">
+    <img src="${x.img.src}" alt="${esc(x.name)}"><span class="num">${i+1}</span><span class="name">${esc(x.name)}</span>
+    <div class="tact"><button type="button" data-act="ins">+ Sisip</button><button type="button" data-act="del" aria-label="Buang">×</button></div></div>`).join('');
+  $('#simgOpts').hidden=!sceneImgs.length;
+  $('#simgText').textContent = sceneImgs.length ? 'Klik atau seret untuk tambah lagi gambar / logo / ikon' : 'Klik atau seret gambar / logo / ikon ke sini (PNG lutsinar pun boleh)';
+}
+let lastCaret=null;
+$('#script').addEventListener('blur',e=>{ lastCaret=[e.target.selectionStart,e.target.selectionEnd]; });
+function insertImgTag(name){
+  const ta=$('#script'), parts=[name,$('#simgAnim').value,$('#simgPos').value];
+  if($('#simgSize').value!=='sederhana') parts.push($('#simgSize').value);
+  if($('#simgMove').value) parts.push($('#simgMove').value);
+  const tag=`[gambar: ${parts.join(', ')}]`;
+  const [a,b]=lastCaret||[ta.value.length,ta.value.length], before=ta.value.slice(0,a), after=ta.value.slice(b);
+  const pre = before && !/[\s]$/.test(before) ? ' ' : '';
+  ta.value=before+pre+tag+(after && !/^\s/.test(after)?' ':'')+after;
+  const pos=(before+pre+tag).length; ta.focus(); ta.setSelectionRange(pos,pos); lastCaret=[pos,pos];
+  state.script=ta.value; refresh();
+}
+$('#simgList').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const i=+b.closest('.thumb').dataset.i, x=sceneImgs[i];
+  if(b.dataset.act==='ins') insertImgTag(x.name);
+  else { sceneImgs.splice(i,1); URL.revokeObjectURL(x.img.src); persistSceneImgs(); renderSceneImgs(); refresh(); }
+});
+$('#simgFile').addEventListener('change',e=>{ addSceneImgs(e.target.files); e.target.value=''; });
+setupDrop($('#simgDrop'),addSceneImgs);
+
+/* ----- Suara latar (voiceover) ----- */
+function trimSilence(buf){
+  const d=buf.getChannelData(0), sr=buf.sampleRate; let peak=0;
+  for(let i=0;i<d.length;i+=4) peak=Math.max(peak,Math.abs(d[i]));
+  const th=Math.max(.01,peak*.08); let a=0,b=d.length-1;
+  while(a<d.length && Math.abs(d[a])<th) a++; while(b>a && Math.abs(d[b])<th) b--;
+  if(a>=b) return {off:0,dur:buf.duration};
+  const off=Math.max(0,a/sr-.08), end=Math.min(buf.duration,b/sr+.2);
+  return {off,dur:end-off};
+}
+async function makeClip(blob){ const buf=await decodeMusic(blob); return {blob,buf,...trimSilence(buf)}; }
+let previewAc=null;
+function playClip(c){
+  try{ previewAc&&previewAc.close(); }catch(e){}
+  previewAc=new (window.AudioContext||window.webkitAudioContext)();
+  const src=previewAc.createBufferSource(); src.buffer=c.buf; src.connect(previewAc.destination); src.start(0,c.off,c.dur);
+}
+let voRec=null; // {key, i, rec, stream, t0, timer}
+function renderVoList(){
+  if(state.voMode!=='mic'){ $('#voList').innerHTML=''; return; }
+  $('#voList').innerHTML=P.scenes.map((s,i)=>{
+    const c=voClips.get(s.voKey), recNow=voRec&&voRec.key===s.voKey;
+    const txt = s.type==='list' ? [s.heading,...s.items].filter(Boolean).join(' · ') : (s.text || '(babak gambar)');
+    return `<div class="vo-row"><span class="vo-n">${i+1}</span>
+      <span class="vo-t">${esc(txt)}<small>${LABEL[s.type]} · ${c?`suara ${c.dur.toFixed(1)}s`:'belum dirakam'}</small></span>
+      <span class="vo-act">
+        <button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Henti':(c?'🎙 Semula':'🎙 Rakam')}</button>
+        ${c?`<button type="button" class="btn small has" data-act="play" data-i="${i}" aria-label="Dengar">▶</button><button type="button" class="btn small" data-act="del" data-i="${i}" aria-label="Buang">×</button>`:''}
+      </span></div>`;
+  }).join('') || '<p class="muted note">Tulis skrip dahulu.</p>';
+}
+async function toggleRecord(i){
+  const s=P.scenes[i]; if(!s) return;
+  if(voRec){ const same=voRec.key===s.voKey; voRec.rec.stop(); if(same) return; await new Promise(r=>setTimeout(r,200)); }
+  let stream;
+  try{ stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
+  catch(e){ alert('Tidak dapat guna mikrofon. Benarkan akses mikrofon untuk halaman ini dalam tetapan pelayar.\n\nJika anda buka fail terus dari komputer dan masih gagal, buka selector melalui link https.'); return; }
+  const rec=new MediaRecorder(stream), chunks=[], key=s.voKey;
+  rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+  rec.onstop=async()=>{
+    stream.getTracks().forEach(t=>t.stop()); clearInterval(voRec&&voRec.timer); voRec=null;
+    const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
+    try{ const c=await makeClip(blob); voClips.set(key,c); idb.set(key,blob); }catch(e){ alert('Rakaman gagal dibaca. Cuba lagi.'); }
+    refresh();
+  };
+  rec.start();
+  voRec={key,i,rec,stream,t0:performance.now()};
+  voRec.timer=setInterval(()=>{ const b=document.querySelector(`#voList button[data-act="rec"][data-i="${voRec&&voRec.i}"]`); if(b&&voRec) b.textContent=`■ Henti (${Math.floor((performance.now()-voRec.t0)/1000)}s)`; },250);
+  renderVoList();
+}
+$('#voList').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const i=+b.dataset.i, s=P.scenes[i]; if(!s) return;
+  if(b.dataset.act==='rec') toggleRecord(i);
+  else if(b.dataset.act==='play'){ const c=voClips.get(s.voKey); c&&playClip(c); }
+  else { voClips.delete(s.voKey); idb.del(s.voKey); refresh(); }
+});
+function syncVoPanel(){
+  $('#voMicPanel').hidden=state.voMode!=='mic';
+  $('#voFilePanel').hidden=state.voMode!=='file';
+  $('#voClear').hidden=!voFile;
+  $('#voText').textContent = voFile ? `🎤 ${voFile.name} (${fmtTime(voFile.dur)}) — klik untuk tukar` : 'Klik atau seret fail suara (MP3 / WAV / M4A)';
+  renderVoList();
+}
+async function setVoFile(file,persist){
+  if(!file) return; $('#voText').textContent='Memproses suara…';
+  try{ voFile={name:file.name||'suara',...await makeClip(file)}; if(persist) idb.set('voFile',{name:voFile.name,blob:file}); }
+  catch(e){ voFile=null; alert('Fail suara ini tidak dapat dibaca. Cuba MP3 atau WAV.'); }
+  syncVoPanel(); refresh();
+}
+$('#voFile').addEventListener('change',e=>{ setVoFile(e.target.files[0],true); e.target.value=''; });
+setupDrop($('#voDrop'),files=>{ const f=[...files].find(f=>f.type.startsWith('audio/')); if(f) setVoFile(f,true); });
+$('#voClear').addEventListener('click',()=>{ voFile=null; idb.del('voFile'); syncVoPanel(); refresh(); });
+$('#voFit').checked=state.voFit;
+$('#voFit').addEventListener('change',e=>{ state.voFit=e.target.checked; refresh(); });
+document.addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="voMode"]')) syncVoPanel(); });
 
 /* ----- Muat semula fail yang disimpan ----- */
 (async()=>{
@@ -940,8 +1292,15 @@ $('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="
   const m=await idb.get('music');
   if(m && m.blob){ try{ musicBuf=await decodeMusic(m.blob); musicName=m.name; }catch(e){} }
   syncMusicPanel();
+  const si=await idb.get('sceneImages');
+  if(Array.isArray(si)) for(const x of si){ try{ const img=await blobToImage(x.blob); sceneImgs.push({name:x.name,blob:x.blob,img,opaque:isOpaque(img)}); }catch(e){} }
+  renderSceneImgs();
+  for(const k of await idb.keys()){ if(typeof k==='string' && k.startsWith('vo:')){ try{ voClips.set(k,await makeClip(await idb.get(k))); }catch(e){} } }
+  const vf=await idb.get('voFile');
+  if(vf && vf.blob){ try{ voFile={name:vf.name,...await makeClip(vf.blob)}; }catch(e){} }
+  syncVoPanel(); refresh();
 })();
-renderImgList(); syncMusicPanel();
+renderImgList(); syncMusicPanel(); renderSceneImgs(); syncVoPanel();
 syncBgPanel();
 $('#script').value=state.script;
 $('#script').addEventListener('input',e=>{ state.script=e.target.value; refresh(); });

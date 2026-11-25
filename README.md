@@ -21,13 +21,40 @@ Di bahagian **Sumber latar**:
   - Lapisan Gelap (teks putih) atau Cerah (teks hitam), dan kekuatan lapisan.
 - Gambar dan muzik sendiri disimpan dalam pelayar (IndexedDB) untuk kali seterusnya.
 
-## Panjang video
+## Panjang video (pilihan paling atas)
 Pilih **Auto** (ikut panjang skrip, maksimum 2 minit) atau tetapkan 15s, 30s, 45s, 1 min, 1.5 min atau 2 min. Semua babak diregang/dipendekkan supaya tepat dengan panjang yang dipilih.
 
 ## Muzik latar
 Pilih *Chill*, *Upbeat* (dijana automatik) atau **Muzik sendiri** — klik/seret fail MP3, WAV, M4A atau OGG. Boleh atur kelantangan, ulang muzik jika lebih pendek daripada video, dan pilih saat mula. Muzik di-fade out pada hujung video.
 
 Hiasan latar (Partikel, Grid, Bentuk) boleh digabungkan dengan warna atau gambar sendiri.
+
+## Suara latar (voiceover)
+- **Rakam suara sendiri** — setiap babak ada butang 🎙 Rakam. Baca teks babak, tekan ■ Henti. Babak dipanjangkan ikut suara; senyap di awal & hujung dipotong automatik. Boleh dengar (▶), rakam semula, atau buang.
+- **Fail suara** — muat naik satu fail MP3/WAV/M4A untuk keseluruhan video (contoh suara AI dari ElevenLabs/CapCut). Tanda "Panjang video ikut panjang suara" supaya video sama panjang dengan suara.
+- Muzik latar diperlahankan automatik bila ada suara.
+- Suara robot terbina dalam pelayar tidak boleh dirakam ke dalam fail video, sebab itu ia tidak disediakan.
+
+## Gambar dalam babak
+Muat naik gambar, logo atau ikon di bahagian **Gambar dalam babak** (bawah skrip). Setiap gambar dapat nama (dari nama fail). Pilih animasi/posisi/saiz/gerakan, letak kursor dalam skrip, dan klik **+ Sisip** — atau taip sendiri:
+
+```
+[gambar: logo, lantun, kanan, besar, terapung, 1s]
+```
+
+| Jenis | Pilihan |
+|---|---|
+| Animasi masuk | `pop` `pudar` `zum` `dari-kiri` `dari-kanan` `dari-atas` `dari-bawah` `putar` `lantun` |
+| Posisi | `tengah` `atas` `bawah` `kiri` `kanan` `penuh` (gambar penuh skrin di belakang teks) |
+| Saiz | `kecil` `sederhana` `besar` |
+| Gerakan berterusan | `terapung` `goyang` `pusing` |
+| Masa | `1s`, `0.5s` … = muncul selepas sekian saat |
+
+- Nama boleh juga nombor: `[gambar: 2]` = gambar kedua dalam senarai.
+- Baris yang ada gambar sahaja → babak gambar besar.
+- Beberapa arahan gambar dalam satu baris → gambar diletak bersebelahan.
+- Dalam senarai, `- [gambar: ikon] Item` → ikon menggantikan bulatan.
+- Skrin menegak (9:16): posisi `kiri`/`kanan` jadi `atas`/`bawah` secara automatik.
 
 ## Format skrip
 | Tulis | Hasil |
