@@ -80,8 +80,20 @@
   .drop{display:flex;align-items:center;justify-content:center;gap:14px;min-height:96px;border:1.5px dashed #3a4256;border-radius:10px;padding:12px;margin-bottom:12px;cursor:pointer;color:var(--muted);font-size:14px;text-align:center;transition:.15s}
   .drop:hover,.drop.over{border-color:var(--brand);color:var(--text);background:rgba(124,92,255,.08)}
   .drop img{max-height:90px;max-width:160px;border-radius:6px;object-fit:cover}
-  select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  select option{background:var(--panel2);color:var(--text)}
   .tog input[type=range]{accent-color:var(--brand);width:120px}
+  .img-list{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+  .thumb{position:relative;width:112px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--bg);cursor:grab;user-select:none}
+  .thumb.dragging{opacity:.35}
+  .thumb.target{outline:2px solid var(--brand)}
+  .thumb img{display:block;width:100%;height:70px;object-fit:cover;pointer-events:none}
+  .thumb .num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px}
+  .thumb .tact{display:flex}
+  .thumb .tact button{flex:1;border:0;border-top:1px solid var(--line);background:var(--panel2);padding:4px 0;cursor:pointer;font-size:14px;line-height:1}
+  .thumb .tact button:hover{background:#262c3a}
+  .thumb .tact button:disabled{opacity:.3;cursor:default}
+  .thumb .tact button[data-act=del]{color:#f87171}
 </style>
 </head>
 <body>
@@ -121,18 +133,36 @@
         </div>
         <div data-show="image">
           <label class="drop" id="drop">
-            <input type="file" id="bgFile" accept="image/*" hidden>
-            <img id="bgThumb" alt="" hidden>
-            <span id="dropText">Klik atau seret gambar ke sini (JPG / PNG / WEBP)</span>
+            <input type="file" id="bgFile" accept="image/*" multiple hidden>
+            <span id="dropText">Klik atau seret gambar ke sini — boleh pilih banyak sekaligus (JPG / PNG / WEBP)</span>
           </label>
+          <div id="imgList" class="img-list"></div>
+          <p id="imgHint" class="muted note" hidden>Seret gambar untuk susun turutan, atau guna butang ‹ ›. Gambar 1 muncul dahulu.</p>
           <div class="subrow">
+            <label class="tog">Tukar gambar
+              <select id="imgMode"><option value="scene">Setiap babak</option><option value="even">Sama rata sepanjang video</option></select>
+            </label>
             <label class="tog">Lapisan
               <select id="overlayTone"><option value="dark">Gelap (teks putih)</option><option value="light">Cerah (teks hitam)</option></select>
             </label>
             <label class="tog">Kekuatan <input type="range" id="overlay" min="0" max="0.85" step="0.05"> <span id="overlayVal" class="muted"></span></label>
             <label class="tog"><input type="checkbox" id="kenburns"> Zum perlahan</label>
-            <button type="button" class="btn small" id="bgClear" hidden>Buang gambar</button>
+            <button type="button" class="btn small" id="bgClear" hidden>Buang semua gambar</button>
           </div>
+        </div>
+      </div>
+      <div id="musicPanel" class="subpanel">
+        <div data-show="custom">
+          <label class="drop" id="musicDrop">
+            <input type="file" id="musicFile" accept="audio/*" hidden>
+            <span id="musicText">Klik atau seret fail muzik ke sini (MP3 / WAV / M4A / OGG)</span>
+          </label>
+        </div>
+        <div class="subrow">
+          <label class="tog">Kelantangan <input type="range" id="musicVol" min="0" max="1" step="0.05"> <span id="musicVolVal" class="muted"></span></label>
+          <label class="tog" data-show="custom"><input type="checkbox" id="musicLoop"> Ulang jika muzik lebih pendek</label>
+          <label class="tog" data-show="custom">Mula pada saat <input type="number" id="musicOffset" min="0" step="1" style="width:70px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px"></label>
+          <button type="button" class="btn small" id="musicClear" data-show="custom" hidden>Buang muzik</button>
         </div>
       </div>
       <div class="row2">
@@ -199,7 +229,8 @@ const GROUPS = [
   {key:'bg',     label:'Hiasan latar', opts:[['gradient','Gradien'],['particles','Partikel'],['grid','Grid'],['shapes','Bentuk'],['solid','Kosong']]},
   {key:'trans',  label:'Peralihan babak', opts:[['fade','Pudar'],['wipe','Sapuan'],['slide','Luncur'],['zoom','Zum']]},
   {key:'speed',  label:'Kelajuan', opts:[['slow','Perlahan'],['normal','Sederhana'],['fast','Laju']]},
-  {key:'music',  label:'Muzik latar', opts:[['none','Tiada'],['chill','Chill'],['upbeat','Upbeat']]},
+  {key:'length', label:'Panjang video', opts:[['auto','Auto','ikut skrip'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]},
+  {key:'music',  label:'Muzik latar', opts:[['none','Tiada'],['chill','Chill'],['upbeat','Upbeat'],['custom','Muzik sendiri']]},
   {key:'quality',label:'Kualiti', opts:[['720','720p','lebih cepat'],['1080','1080p','HD']]},
 ];
 const DEFAULT_SCRIPT = `# 5 Fakta Menarik Tentang Malaysia
@@ -216,10 +247,26 @@ const state = {
   music:'chill', quality:'1080', sfx:true, progress:true, stats:true, customAccent:false, accent:'#00e5ff',
   outro:'Terima kasih kerana menonton!', handle:'@akaunanda', script:DEFAULT_SCRIPT,
   bgMode:'theme', bgColor1:'#1e3a8a', bgColor2:'#7c3aed', overlay:0.45, overlayTone:'dark', kenburns:true,
+  imgMode:'scene', length:'auto', musicVol:0.8, musicLoop:true, musicOffset:0,
 };
+const MAX_LEN = 120; // had panjang video (saat)
 try { Object.assign(state, JSON.parse(localStorage.getItem('pvg-state')||'{}')); } catch(e){}
 const save = () => { try { localStorage.setItem('pvg-state', JSON.stringify(state)); } catch(e){} };
-let bgImg = null; // gambar latar sendiri (Image), disimpan berasingan sebagai dataURL
+let bgImgs = [];     // gambar latar sendiri: [{img, blob}] ikut turutan
+let musicBuf = null; // muzik sendiri (AudioBuffer)
+let musicName = '';
+
+/* Simpanan fail besar (gambar, muzik) dalam IndexedDB pelayar */
+const idb = (() => {
+  let dbp;
+  const db = () => dbp ??= new Promise((res,rej)=>{ const r=indexedDB.open('pvg',1); r.onupgradeneeded=()=>r.result.createObjectStore('files'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
+  const tx = (mode,fn) => db().then(d=>new Promise((res,rej)=>{ const t=d.transaction('files',mode), q=fn(t.objectStore('files')); t.oncomplete=()=>res(q&&q.result); t.onerror=()=>rej(t.error); }));
+  return {
+    get:k=>tx('readonly',s=>s.get(k)).catch(()=>undefined),
+    set:(k,v)=>tx('readwrite',s=>s.put(v,k)).catch(()=>{}),
+    del:k=>tx('readwrite',s=>s.delete(k)).catch(()=>{}),
+  };
+})();
 
 /* ===================== Utiliti ===================== */
 const $ = s => document.querySelector(s);
@@ -241,7 +288,7 @@ function theme(){
     t.bg=[state.bgColor1,state.bgColor2];
     t.dark=(luminance(state.bgColor1)+luminance(state.bgColor2))/2<.4;
     t.text=t.dark?'#ffffff':'#111827'; t.shadow=false;
-  } else if(state.bgMode==='image' && bgImg){
+  } else if(state.bgMode==='image' && bgImgs.length){
     t.dark=state.overlayTone==='dark';
     t.text=t.dark?'#ffffff':'#111827';
     t.bg=t.dark?['#0b0b0f','#0b0b0f']:['#ffffff','#ffffff'];
@@ -284,7 +331,7 @@ function fmtNum(v,st){
   const s = st.comma ? v.toLocaleString('en-US',{minimumFractionDigits:st.dec,maximumFractionDigits:st.dec}) : v.toFixed(st.dec);
   return tr(st.prefix + s + st.suffix);
 }
-let P = {scenes:[], total:0};
+let P = {scenes:[], total:0, autoTotal:0, imgSegs:[]};
 function parseScript(){
   const scenes=[]; let list=null;
   const flush=()=>{ if(list){ scenes.push(list); list=null; } };
@@ -322,7 +369,20 @@ function parseScript(){
     if(state.anim==='type' && s.type!=='list') d = Math.max(d, s.text.length/26 + 1.6);
     s.dur = Math.max(2.2, d*sp); s.start=t; t+=s.dur;
   }
-  P = {scenes, total:t};
+  // panjang video: auto (maks 2 min) atau tetap — skala semua babak
+  const autoTotal=t;
+  const target = state.length==='auto' ? Math.min(t,MAX_LEN) : Math.min(+state.length,MAX_LEN);
+  if(scenes.length && Math.abs(target-t)>.01){
+    const f=target/t; t=0;
+    for(const s of scenes){ s.dur*=f; s.start=t; t+=s.dur; if(s.itemTimes) s.itemTimes=s.itemTimes.map(x=>x*f); }
+  }
+  // segmen gambar latar
+  const imgSegs=[], n=bgImgs.length;
+  if(n && t>0){
+    if(state.imgMode==='even' || n===1){ const L=t/n; for(let i=0;i<n;i++) imgSegs.push({start:i*L,dur:L,img:i}); }
+    else scenes.forEach((s,i)=>imgSegs.push({start:s.start,dur:s.dur,img:i%n}));
+  }
+  P = {scenes, total:t, autoTotal, imgSegs};
 }
 
 /* ===================== Susun atur teks ===================== */
@@ -407,14 +467,25 @@ function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,
 const RND = mulberry(7);
 const PARTS = Array.from({length:70},()=>({x:RND(),y:RND(),r:RND(),s:.02+RND()*.06,a:.15+RND()*.45,c:Math.floor(RND()*3)}));
 const SHAPES = Array.from({length:9},()=>({x:RND(),y:RND(),r:.04+RND()*.09,k:Math.floor(RND()*4),ph:RND()*6.28,sp:.2+RND()*.4,c:Math.floor(RND()*2)}));
+function drawCover(i,k,p,alpha){
+  const img=bgImgs[i] && bgImgs[i].img; if(!img) return;
+  const iw=img.naturalWidth, ih=img.naturalHeight;
+  // zum masuk / keluar berselang-seli, dengan sedikit gerakan sisi
+  const z=state.kenburns ? (k%2===0 ? 1+.12*p : 1.12-.12*p) : 1;
+  const sc=Math.max(W/iw,H/ih)*z, dw=iw*sc, dh=ih*sc;
+  const pan=state.kenburns ? (k%2===0?1:-1)*(p-.5)*(dw-W)*.5 : 0;
+  ctx.save(); ctx.globalAlpha=alpha; ctx.drawImage(img,(W-dw)/2+pan,(H-dh)/2,dw,dh); ctx.restore();
+}
 function drawBg(t){
   const th=theme(), u=U();
   if(th.image){
-    // gambar sendiri: "cover" + zum perlahan + lapisan gelap/cerah
-    const iw=bgImg.naturalWidth, ih=bgImg.naturalHeight;
-    const zoom=state.kenburns ? 1+.1*clamp(t/Math.max(P.total,1)) : 1;
-    const sc=Math.max(W/iw,H/ih)*zoom, dw=iw*sc, dh=ih*sc;
-    ctx.drawImage(bgImg,(W-dw)/2,(H-dh)/2,dw,dh);
+    // gambar sendiri: ikut turutan, "cover" + zum perlahan + crossfade + lapisan gelap/cerah
+    const segs=P.imgSegs, XF=.7;
+    let k=segs.findIndex(s=>t<s.start+s.dur); if(k<0) k=segs.length-1;
+    const seg=segs[k]||{start:0,dur:1,img:0}, lt=t-seg.start;
+    drawCover(seg.img, Math.max(k,0), clamp(lt/seg.dur), 1);
+    const nx=segs[k+1];
+    if(nx && nx.img!==seg.img && lt>seg.dur-XF) drawCover(nx.img, k+1, 0, easeInOutCubic(clamp((lt-(seg.dur-XF))/XF)));
     ctx.fillStyle=state.overlayTone==='dark'?`rgba(0,0,0,${state.overlay})`:`rgba(255,255,255,${state.overlay})`;
     ctx.fillRect(0,0,W,H);
     if(state.bg==='solid'||state.bg==='gradient') return;
@@ -588,23 +659,33 @@ const CHORDS = {
   C:[NOTE.C3,NOTE.E3,NOTE.G3,NOTE.B3],  G:[NOTE.G3,NOTE.B3,NOTE.D4,NOTE.E4],
 };
 function createAudio(total){
-  if(state.music==='none' && !state.sfx) return null;
+  const useCustom = state.music==='custom' && musicBuf;
+  if((state.music==='none' || (state.music==='custom' && !musicBuf)) && !state.sfx) return null;
   const ac=new (window.AudioContext||window.webkitAudioContext)();
   const dest=ac.createMediaStreamDestination();
-  const comp=ac.createDynamicsCompressor(), master=ac.createGain();
+  const comp=ac.createDynamicsCompressor(), master=ac.createGain(), mus=ac.createGain();
   master.connect(comp); comp.connect(dest); comp.connect(ac.destination);
+  mus.gain.value=state.musicVol; mus.connect(master);
   const T0=ac.currentTime+.15;
+  if(useCustom){
+    // muzik sendiri: main dari saat pilihan, ulang jika perlu
+    const src=ac.createBufferSource(); src.buffer=musicBuf;
+    const off=Math.min(Math.max(0,+state.musicOffset||0), Math.max(0,musicBuf.duration-.1));
+    if(state.musicLoop){ src.loop=true; src.loopStart=off; src.loopEnd=musicBuf.duration; }
+    const g=ac.createGain(); g.gain.setValueAtTime(0,T0); g.gain.linearRampToValueAtTime(1,T0+.4);
+    src.connect(g).connect(mus); src.start(T0,off); src.stop(T0+total+.1);
+  }
   master.gain.setValueAtTime(.8,T0); master.gain.setValueAtTime(.8,T0+Math.max(0,total-1.6)); master.gain.linearRampToValueAtTime(0,T0+total);
   const nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate), nd=nb.getChannelData(0);
   for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
 
   const env=(g,t,peak,att,dur)=>{ g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(peak,t+att); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); };
-  const kick=(t,v)=>{ const o=ac.createOscillator(),g=ac.createGain(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(40,t+.14); env(g,t,v,.005,.35); o.connect(g).connect(master); o.start(t); o.stop(t+.4); };
-  const noise=(t,v,dur,type,freq)=>{ const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(); s.buffer=nb; f.type=type; f.frequency.value=freq; env(g,t,v,.002,dur); s.connect(f).connect(g).connect(master); s.start(t); s.stop(t+dur+.05); };
-  const tone=(t,freq,v,dur,type,cut,att=.01)=>{ const o=ac.createOscillator(),f=ac.createBiquadFilter(),g=ac.createGain(); o.type=type; o.frequency.value=freq; f.type='lowpass'; f.frequency.value=cut; env(g,t,v,att,dur); o.connect(f).connect(g).connect(master); o.start(t); o.stop(t+dur+.05); };
+  const kick=(t,v)=>{ const o=ac.createOscillator(),g=ac.createGain(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(40,t+.14); env(g,t,v,.005,.35); o.connect(g).connect(mus); o.start(t); o.stop(t+.4); };
+  const noise=(t,v,dur,type,freq)=>{ const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(); s.buffer=nb; f.type=type; f.frequency.value=freq; env(g,t,v,.002,dur); s.connect(f).connect(g).connect(mus); s.start(t); s.stop(t+dur+.05); };
+  const tone=(t,freq,v,dur,type,cut,att=.01)=>{ const o=ac.createOscillator(),f=ac.createBiquadFilter(),g=ac.createGain(); o.type=type; o.frequency.value=freq; f.type='lowpass'; f.frequency.value=cut; env(g,t,v,att,dur); o.connect(f).connect(g).connect(mus); o.start(t); o.stop(t+dur+.05); };
 
   const events=[];
-  if(state.music!=='none'){
+  if(state.music==='chill' || state.music==='upbeat'){
     const up=state.music==='upbeat', bpm=up?118:84, beat=60/bpm;
     const prog=up?['C','G','Am','F']:['Am','F','C','G'];
     for(let b=0, t=0; t<total; b++, t=b*beat){
@@ -664,7 +745,7 @@ async function start(record){
     if(!mime || !cv.captureStream){ audio&&audio.close(); alert('Pelayar ini tidak menyokong rakaman video. Sila guna Google Chrome atau Microsoft Edge versi terkini.'); return; }
     const stream=cv.captureStream(30);
     if(audio) audio.dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-    rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:state.quality==='1080'?10e6:6e6, audioBitsPerSecond:160000});
+    rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:state.quality==='1080'?8e6:5e6, audioBitsPerSecond:160000});
     rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
     $('#result').hidden=true; $('#status').hidden=false;
   }
@@ -716,7 +797,11 @@ function renderGroups(){
 const LABEL={title:'Tajuk',text:'Teks',stat:'Nombor',list:'Senarai',outro:'Penutup'};
 function refresh(){
   save(); parseScript(); applyDims();
-  $('#sceneInfo').textContent=`${P.scenes.length} babak · ${fmtTime(P.total)}`;
+  const avg=P.scenes.length?P.total/P.scenes.length:0;
+  let info=`${P.scenes.length} babak · ${fmtTime(P.total)}`;
+  if(state.length==='auto' && P.autoTotal>MAX_LEN) info+=' (dipendekkan ke had 2 min)';
+  if(P.scenes.length && avg<1.6) info+=' · ⚠ babak terlalu laju — pilih panjang lebih lama';
+  $('#sceneInfo').textContent=info;
   $('#sceneList').innerHTML=P.scenes.map((s,i)=>`<span><b>${i+1}</b> ${LABEL[s.type]} · ${s.dur.toFixed(1)}s</span>`).join('');
   const sc=$('#scrub'); sc.max=P.total.toFixed(2);
   let t=+sc.value; if(t>P.total) t=0;
@@ -737,9 +822,6 @@ document.querySelector('.chip[data-key="bgMode"]').closest('.group').after(bgPan
 function syncBgPanel(){
   bgPanel.hidden = state.bgMode==='theme';
   bgPanel.querySelectorAll('[data-show]').forEach(el=>el.hidden = el.dataset.show!==state.bgMode);
-  $('#bgThumb').hidden=!bgImg; $('#bgClear').hidden=!bgImg;
-  if(bgImg) $('#bgThumb').src=bgImg.src;
-  $('#dropText').textContent = bgImg ? 'Klik atau seret untuk tukar gambar' : 'Klik atau seret gambar ke sini (JPG / PNG / WEBP)';
   $('#overlayVal').textContent=Math.round(state.overlay*100)+'%';
 }
 $('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="bgMode"]')) syncBgPanel(); });
@@ -752,37 +834,114 @@ $('#overlay').addEventListener('input',e=>{ state.overlay=+e.target.value; syncB
 $('#kenburns').checked=state.kenburns;
 $('#kenburns').addEventListener('change',e=>{ state.kenburns=e.target.checked; refresh(); });
 
-function setBgImage(src, persist){
-  const img=new Image();
-  img.onload=()=>{
-    bgImg=img; syncBgPanel(); refresh();
-    if(persist){ try{ localStorage.setItem('pvg-bgimg',src); }catch(e){ /* terlalu besar untuk disimpan — tetap guna untuk sesi ini */ } }
-  };
-  img.src=src;
+/* ----- Banyak gambar: muat naik, susun, buang ----- */
+function blobToImage(blob){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=URL.createObjectURL(blob); }); }
+async function shrinkImage(file){
+  // kecilkan ke maks 2400px supaya laju & jimat ruang
+  const src=await blobToImage(file);
+  const k=Math.min(1,2400/Math.max(src.naturalWidth,src.naturalHeight));
+  const c=document.createElement('canvas'); c.width=Math.round(src.naturalWidth*k); c.height=Math.round(src.naturalHeight*k);
+  c.getContext('2d').drawImage(src,0,0,c.width,c.height); URL.revokeObjectURL(src.src);
+  return new Promise(res=>c.toBlob(res,'image/jpeg',.88));
 }
-function loadBgFile(file){
-  if(!file || !file.type.startsWith('image/')) return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    const src=new Image();
-    src.onload=()=>{
-      // kecilkan ke maks 2400px supaya laju & boleh disimpan
-      const k=Math.min(1,2400/Math.max(src.naturalWidth,src.naturalHeight));
-      const c=document.createElement('canvas'); c.width=Math.round(src.naturalWidth*k); c.height=Math.round(src.naturalHeight*k);
-      c.getContext('2d').drawImage(src,0,0,c.width,c.height);
-      setBgImage(c.toDataURL('image/jpeg',.88), true);
-    };
-    src.src=reader.result;
-  };
-  reader.readAsDataURL(file);
+const persistImages = () => idb.set('bgImages', bgImgs.map(x=>x.blob));
+async function addImages(files){
+  const list=[...files].filter(f=>f.type.startsWith('image/'));
+  if(!list.length) return;
+  $('#dropText').textContent='Memproses gambar…';
+  for(const f of list){ try{ const blob=await shrinkImage(f); bgImgs.push({blob, img:await blobToImage(blob)}); }catch(e){} }
+  persistImages(); renderImgList(); refresh();
 }
-$('#bgFile').addEventListener('change',e=>{ loadBgFile(e.target.files[0]); e.target.value=''; });
-const drop=$('#drop');
-['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('over'); }));
-['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop',e=>loadBgFile(e.dataTransfer.files[0]));
-$('#bgClear').addEventListener('click',e=>{ e.preventDefault(); bgImg=null; try{ localStorage.removeItem('pvg-bgimg'); }catch(_){} syncBgPanel(); refresh(); });
-try{ const saved=localStorage.getItem('pvg-bgimg'); if(saved) setBgImage(saved,false); }catch(e){}
+function moveImage(from,to){
+  if(to<0||to>=bgImgs.length||from===to) return;
+  const [x]=bgImgs.splice(from,1); bgImgs.splice(to,0,x);
+  persistImages(); renderImgList(); refresh();
+}
+function removeImage(i){ const [x]=bgImgs.splice(i,1); URL.revokeObjectURL(x.img.src); persistImages(); renderImgList(); refresh(); }
+function renderImgList(){
+  const n=bgImgs.length;
+  $('#imgList').innerHTML=bgImgs.map((x,i)=>`<div class="thumb" draggable="true" data-i="${i}">
+    <img src="${x.img.src}" alt="Gambar ${i+1}"><span class="num">${i+1}</span>
+    <div class="tact"><button type="button" data-act="left" ${i===0?'disabled':''} aria-label="Ke kiri">‹</button><button type="button" data-act="right" ${i===n-1?'disabled':''} aria-label="Ke kanan">›</button><button type="button" data-act="del" aria-label="Buang">×</button></div></div>`).join('');
+  $('#imgHint').hidden=n<2; $('#bgClear').hidden=!n;
+  $('#dropText').textContent = n ? `${n} gambar dipilih — klik atau seret untuk tambah lagi` : 'Klik atau seret gambar ke sini — boleh pilih banyak sekaligus (JPG / PNG / WEBP)';
+}
+const imgList=$('#imgList');
+imgList.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]'); if(!b) return;
+  const i=+b.closest('.thumb').dataset.i;
+  if(b.dataset.act==='left') moveImage(i,i-1);
+  else if(b.dataset.act==='right') moveImage(i,i+1);
+  else removeImage(i);
+});
+let dragFrom=null;
+imgList.addEventListener('dragstart',e=>{ const t=e.target.closest('.thumb'); if(!t) return; dragFrom=+t.dataset.i; t.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain','x'); });
+imgList.addEventListener('dragend',()=>{ dragFrom=null; imgList.querySelectorAll('.thumb').forEach(t=>t.classList.remove('dragging','target')); });
+imgList.addEventListener('dragover',e=>{
+  if(dragFrom===null) return; e.preventDefault();
+  imgList.querySelectorAll('.thumb').forEach(t=>t.classList.toggle('target',t===e.target.closest('.thumb')));
+});
+imgList.addEventListener('drop',e=>{
+  if(dragFrom===null) return; e.preventDefault();
+  const t=e.target.closest('.thumb'); if(t) moveImage(dragFrom,+t.dataset.i);
+});
+$('#imgMode').value=state.imgMode;
+$('#imgMode').addEventListener('change',e=>{ state.imgMode=e.target.value; refresh(); });
+$('#bgFile').addEventListener('change',e=>{ addImages(e.target.files); e.target.value=''; });
+function setupDrop(el,onFiles){
+  ['dragenter','dragover'].forEach(ev=>el.addEventListener(ev,e=>{ if(dragFrom!==null) return; e.preventDefault(); el.classList.add('over'); }));
+  ['dragleave','drop'].forEach(ev=>el.addEventListener(ev,e=>{ e.preventDefault(); el.classList.remove('over'); }));
+  el.addEventListener('drop',e=>{ if(e.dataTransfer.files.length) onFiles(e.dataTransfer.files); });
+}
+setupDrop($('#drop'),addImages);
+$('#bgClear').addEventListener('click',()=>{ bgImgs.forEach(x=>URL.revokeObjectURL(x.img.src)); bgImgs=[]; persistImages(); renderImgList(); refresh(); });
+
+/* ----- Muzik sendiri ----- */
+const musicPanel=$('#musicPanel');
+document.querySelector('.chip[data-key="music"]').closest('.group').after(musicPanel);
+function syncMusicPanel(){
+  musicPanel.hidden = state.music==='none';
+  musicPanel.querySelectorAll('[data-show]').forEach(el=>el.hidden = el.dataset.show!==state.music || (el.id==='musicClear' && !musicBuf));
+  $('#musicVolVal').textContent=Math.round(state.musicVol*100)+'%';
+  $('#musicText').textContent = musicBuf ? `♪ ${musicName} (${fmtTime(musicBuf.duration)}) — klik untuk tukar` : 'Klik atau seret fail muzik ke sini (MP3 / WAV / M4A / OGG)';
+}
+async function decodeMusic(blob){
+  const ac=new OfflineAudioContext(2,44100,44100);
+  return ac.decodeAudioData(await blob.arrayBuffer());
+}
+async function setMusic(file, persist){
+  if(!file) return;
+  $('#musicText').textContent='Memproses muzik…';
+  try{
+    musicBuf=await decodeMusic(file); musicName=file.name||'muzik';
+    if(persist) idb.set('music',{name:musicName, blob:file});
+  }catch(e){ musicBuf=null; alert('Fail muzik ini tidak dapat dibaca. Cuba MP3 atau WAV.'); }
+  syncMusicPanel();
+}
+$('#musicFile').addEventListener('change',e=>{ setMusic(e.target.files[0],true); e.target.value=''; });
+setupDrop($('#musicDrop'),files=>{ const f=[...files].find(f=>f.type.startsWith('audio/')); if(f) setMusic(f,true); });
+$('#musicClear').addEventListener('click',()=>{ musicBuf=null; musicName=''; idb.del('music'); syncMusicPanel(); });
+$('#musicVol').value=state.musicVol;
+$('#musicVol').addEventListener('input',e=>{ state.musicVol=+e.target.value; save(); syncMusicPanel(); });
+$('#musicLoop').checked=state.musicLoop;
+$('#musicLoop').addEventListener('change',e=>{ state.musicLoop=e.target.checked; save(); });
+$('#musicOffset').value=state.musicOffset;
+$('#musicOffset').addEventListener('input',e=>{ state.musicOffset=Math.max(0,+e.target.value||0); save(); });
+$('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="music"]')) syncMusicPanel(); });
+
+/* ----- Muat semula fail yang disimpan ----- */
+(async()=>{
+  const blobs=await idb.get('bgImages');
+  if(Array.isArray(blobs) && blobs.length){ for(const blob of blobs){ try{ bgImgs.push({blob, img:await blobToImage(blob)}); }catch(e){} } }
+  else { // pindah dari versi lama (1 gambar dalam localStorage)
+    try{ const old=localStorage.getItem('pvg-bgimg'); if(old){ const blob=await (await fetch(old)).blob(); bgImgs.push({blob,img:await blobToImage(blob)}); persistImages(); localStorage.removeItem('pvg-bgimg'); } }catch(e){}
+  }
+  renderImgList(); refresh();
+  const m=await idb.get('music');
+  if(m && m.blob){ try{ musicBuf=await decodeMusic(m.blob); musicName=m.name; }catch(e){} }
+  syncMusicPanel();
+})();
+renderImgList(); syncMusicPanel();
 syncBgPanel();
 $('#script').value=state.script;
 $('#script').addEventListener('input',e=>{ state.script=e.target.value; refresh(); });

@@ -14,7 +14,18 @@ Alat satu halaman untuk hasilkan video motion graphic: pilih gaya, tulis skrip, 
 Di bahagian **Sumber latar**:
 - **Ikut tema** — guna warna tema yang dipilih.
 - **Warna sendiri** — pilih 2 warna (gradien), atau tekan "Guna 1 warna sahaja" / pilih hiasan *Kosong* untuk warna padu. Warna teks dipilih automatik ikut kecerahan latar.
-- **Gambar sendiri** — klik atau seret gambar. Boleh pilih lapisan Gelap (teks putih) atau Cerah (teks hitam), kekuatan lapisan, dan zum perlahan. Gambar disimpan dalam pelayar untuk kali seterusnya.
+- **Gambar sendiri** — klik atau seret satu atau lebih gambar sekaligus.
+  - Susun turutan dengan **seret** thumbnail, atau butang **‹ ›**. Butang **×** buang gambar.
+  - **Tukar gambar**: *Setiap babak* (gambar 1 → babak 1, gambar 2 → babak 2, …, berulang) atau *Sama rata sepanjang video*.
+  - Peralihan antara gambar guna crossfade; *Zum perlahan* bergerak masuk/keluar berselang-seli.
+  - Lapisan Gelap (teks putih) atau Cerah (teks hitam), dan kekuatan lapisan.
+- Gambar dan muzik sendiri disimpan dalam pelayar (IndexedDB) untuk kali seterusnya.
+
+## Panjang video
+Pilih **Auto** (ikut panjang skrip, maksimum 2 minit) atau tetapkan 15s, 30s, 45s, 1 min, 1.5 min atau 2 min. Semua babak diregang/dipendekkan supaya tepat dengan panjang yang dipilih.
+
+## Muzik latar
+Pilih *Chill*, *Upbeat* (dijana automatik) atau **Muzik sendiri** — klik/seret fail MP3, WAV, M4A atau OGG. Boleh atur kelantangan, ulang muzik jika lebih pendek daripada video, dan pilih saat mula. Muzik di-fade out pada hujung video.
 
 Hiasan latar (Partikel, Grid, Bentuk) boleh digabungkan dengan warna atau gambar sendiri.
 
