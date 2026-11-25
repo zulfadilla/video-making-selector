@@ -73,6 +73,15 @@
   .result .btn{width:100%}
   .result p{font-size:12px;margin:8px 0 0}
   fieldset{border:0;margin:0;padding:0;min-width:0}
+  .subpanel{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;margin:-4px 0 16px}
+  .subpanel[hidden],.subpanel [hidden]{display:none!important}
+  .subrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+  .note{font-size:12px;flex-basis:100%}
+  .drop{display:flex;align-items:center;justify-content:center;gap:14px;min-height:96px;border:1.5px dashed #3a4256;border-radius:10px;padding:12px;margin-bottom:12px;cursor:pointer;color:var(--muted);font-size:14px;text-align:center;transition:.15s}
+  .drop:hover,.drop.over{border-color:var(--brand);color:var(--text);background:rgba(124,92,255,.08)}
+  .drop img{max-height:90px;max-width:160px;border-radius:6px;object-fit:cover}
+  select{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .tog input[type=range]{accent-color:var(--brand);width:120px}
 </style>
 </head>
 <body>
@@ -103,6 +112,29 @@
     <div class="card">
       <h2>2. Pilih gaya</h2>
       <div id="groups"></div>
+      <div id="bgPanel" class="subpanel">
+        <div data-show="color" class="subrow">
+          <label class="tog">Warna 1 <input type="color" id="bgColor1"></label>
+          <label class="tog">Warna 2 <input type="color" id="bgColor2"></label>
+          <button type="button" class="btn small" id="bgSame">Guna 1 warna sahaja</button>
+          <span class="muted note">Hiasan "Kosong" = warna padu. Warna teks dipilih automatik.</span>
+        </div>
+        <div data-show="image">
+          <label class="drop" id="drop">
+            <input type="file" id="bgFile" accept="image/*" hidden>
+            <img id="bgThumb" alt="" hidden>
+            <span id="dropText">Klik atau seret gambar ke sini (JPG / PNG / WEBP)</span>
+          </label>
+          <div class="subrow">
+            <label class="tog">Lapisan
+              <select id="overlayTone"><option value="dark">Gelap (teks putih)</option><option value="light">Cerah (teks hitam)</option></select>
+            </label>
+            <label class="tog">Kekuatan <input type="range" id="overlay" min="0" max="0.85" step="0.05"> <span id="overlayVal" class="muted"></span></label>
+            <label class="tog"><input type="checkbox" id="kenburns"> Zum perlahan</label>
+            <button type="button" class="btn small" id="bgClear" hidden>Buang gambar</button>
+          </div>
+        </div>
+      </div>
       <div class="row2">
         <label class="field"><span>Teks penutup</span><input id="outro" placeholder="Kosongkan jika tak perlu"></label>
         <label class="field"><span>Watermark / handle</span><input id="handle" placeholder="@akaunanda"></label>
@@ -163,7 +195,8 @@ const GROUPS = [
   {key:'theme',  label:'Tema warna', opts:Object.entries(THEMES).map(([k,t])=>[k,t.name])},
   {key:'font',   label:'Font', opts:Object.entries(FONTS).map(([k,f])=>[k,f.name])},
   {key:'anim',   label:'Animasi teks', opts:[['pop','Pop kata'],['fade','Fade naik'],['type','Taip'],['slide','Luncur'],['zoom','Zum'],['random','Rawak']]},
-  {key:'bg',     label:'Latar belakang', opts:[['gradient','Gradien'],['particles','Partikel'],['grid','Grid'],['shapes','Bentuk'],['solid','Kosong']]},
+  {key:'bgMode', label:'Sumber latar', opts:[['theme','Ikut tema'],['color','Warna sendiri'],['image','Gambar sendiri']]},
+  {key:'bg',     label:'Hiasan latar', opts:[['gradient','Gradien'],['particles','Partikel'],['grid','Grid'],['shapes','Bentuk'],['solid','Kosong']]},
   {key:'trans',  label:'Peralihan babak', opts:[['fade','Pudar'],['wipe','Sapuan'],['slide','Luncur'],['zoom','Zum']]},
   {key:'speed',  label:'Kelajuan', opts:[['slow','Perlahan'],['normal','Sederhana'],['fast','Laju']]},
   {key:'music',  label:'Muzik latar', opts:[['none','Tiada'],['chill','Chill'],['upbeat','Upbeat']]},
@@ -182,9 +215,11 @@ const state = {
   format:'16:9', theme:'neon', font:'poppins', anim:'pop', bg:'gradient', trans:'fade', speed:'normal',
   music:'chill', quality:'1080', sfx:true, progress:true, stats:true, customAccent:false, accent:'#00e5ff',
   outro:'Terima kasih kerana menonton!', handle:'@akaunanda', script:DEFAULT_SCRIPT,
+  bgMode:'theme', bgColor1:'#1e3a8a', bgColor2:'#7c3aed', overlay:0.45, overlayTone:'dark', kenburns:true,
 };
 try { Object.assign(state, JSON.parse(localStorage.getItem('pvg-state')||'{}')); } catch(e){}
 const save = () => { try { localStorage.setItem('pvg-state', JSON.stringify(state)); } catch(e){} };
+let bgImg = null; // gambar latar sendiri (Image), disimpan berasingan sebagai dataURL
 
 /* ===================== Utiliti ===================== */
 const $ = s => document.querySelector(s);
@@ -197,7 +232,29 @@ const wc = s => s.replace(/\*/g,'').split(/\s+/).filter(Boolean).length;
 function hexA(hex,a){ const h=hex.replace('#',''); const n=parseInt(h.length===3?h.replace(/./g,c=>c+c):h,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
 function mulberry(seed){ return () => { seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 const fmtTime = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-function theme(){ const t={...THEMES[state.theme]}; if(state.customAccent) t.accent=state.accent; return t; }
+function luminance(hex){ const n=parseInt(hex.replace('#',''),16); const c=[n>>16&255,n>>8&255,n&255].map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);}); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
+function mixHex(a,b,k){ const p=h=>{const n=parseInt(h.replace('#',''),16);return[n>>16&255,n>>8&255,n&255];}; const A=p(a),B=p(b); return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*k).toString(16).padStart(2,'0')).join(''); }
+function theme(){
+  const t={...THEMES[state.theme]};
+  if(state.customAccent) t.accent=state.accent;
+  if(state.bgMode==='color'){
+    t.bg=[state.bgColor1,state.bgColor2];
+    t.dark=(luminance(state.bgColor1)+luminance(state.bgColor2))/2<.4;
+    t.text=t.dark?'#ffffff':'#111827'; t.shadow=false;
+  } else if(state.bgMode==='image' && bgImg){
+    t.dark=state.overlayTone==='dark';
+    t.text=t.dark?'#ffffff':'#111827';
+    t.bg=t.dark?['#0b0b0f','#0b0b0f']:['#ffffff','#ffffff'];
+    t.shadow=true; t.image=true;
+  }
+  if(state.bgMode!=='theme' && !state.customAccent){
+    // pastikan warna aksen cukup kontras dengan latar sendiri
+    const bgL = t.image ? (t.dark ? .03 : .9) : (luminance(t.bg[0])+luminance(t.bg[1]))/2;
+    const ratio = c => { const l=luminance(c); return (Math.max(l,bgL)+.05)/(Math.min(l,bgL)+.05); };
+    for(let k=1;k<=8 && ratio(t.accent)<3;k++) t.accent=mixHex(THEMES[state.theme].accent,t.text,k*.12);
+  }
+  return t;
+}
 function fontStr(size,bold){ const f=FONTS[state.font]; return `${bold?f.bold:f.reg} ${size}px "${f.family}", system-ui, sans-serif`; }
 const tr = s => FONTS[state.font].upper ? s.toUpperCase() : s;
 
@@ -352,14 +409,25 @@ const PARTS = Array.from({length:70},()=>({x:RND(),y:RND(),r:RND(),s:.02+RND()*.
 const SHAPES = Array.from({length:9},()=>({x:RND(),y:RND(),r:.04+RND()*.09,k:Math.floor(RND()*4),ph:RND()*6.28,sp:.2+RND()*.4,c:Math.floor(RND()*2)}));
 function drawBg(t){
   const th=theme(), u=U();
-  if(state.bg==='solid'){ ctx.fillStyle=th.bg[0]; ctx.fillRect(0,0,W,H); return; }
-  const a=t*.15, r=Math.hypot(W,H)/2;
-  const g=ctx.createLinearGradient(W/2-Math.cos(a)*r,H/2-Math.sin(a)*r,W/2+Math.cos(a)*r,H/2+Math.sin(a)*r);
-  g.addColorStop(0,th.bg[0]); g.addColorStop(1,th.bg[1]); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-  const bx=W*(.5+.35*Math.sin(t*.3)), by=H*(.5+.3*Math.cos(t*.23)), R=Math.max(W,H)*.55;
-  const rg=ctx.createRadialGradient(bx,by,0,bx,by,R);
-  rg.addColorStop(0,hexA(th.accent,th.dark?.2:.14)); rg.addColorStop(1,hexA(th.accent,0));
-  ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+  if(th.image){
+    // gambar sendiri: "cover" + zum perlahan + lapisan gelap/cerah
+    const iw=bgImg.naturalWidth, ih=bgImg.naturalHeight;
+    const zoom=state.kenburns ? 1+.1*clamp(t/Math.max(P.total,1)) : 1;
+    const sc=Math.max(W/iw,H/ih)*zoom, dw=iw*sc, dh=ih*sc;
+    ctx.drawImage(bgImg,(W-dw)/2,(H-dh)/2,dw,dh);
+    ctx.fillStyle=state.overlayTone==='dark'?`rgba(0,0,0,${state.overlay})`:`rgba(255,255,255,${state.overlay})`;
+    ctx.fillRect(0,0,W,H);
+    if(state.bg==='solid'||state.bg==='gradient') return;
+  } else if(state.bg==='solid'){ ctx.fillStyle=th.bg[0]; ctx.fillRect(0,0,W,H); return; }
+  else {
+    const a=t*.15, r=Math.hypot(W,H)/2;
+    const g=ctx.createLinearGradient(W/2-Math.cos(a)*r,H/2-Math.sin(a)*r,W/2+Math.cos(a)*r,H/2+Math.sin(a)*r);
+    g.addColorStop(0,th.bg[0]); g.addColorStop(1,th.bg[1]); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const bx=W*(.5+.35*Math.sin(t*.3)), by=H*(.5+.3*Math.cos(t*.23)), R=Math.max(W,H)*.55;
+    const rg=ctx.createRadialGradient(bx,by,0,bx,by,R);
+    rg.addColorStop(0,hexA(th.accent,th.dark?.2:.14)); rg.addColorStop(1,hexA(th.accent,0));
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+  }
   const cols=[th.accent,th.accent2,th.text];
   if(state.bg==='particles'){
     for(const p of PARTS){
@@ -373,7 +441,7 @@ function drawBg(t){
     for(let y=off-sp;y<H+sp;y+=sp){ ctx.moveTo(0,y); ctx.lineTo(W,y); }
     ctx.stroke();
     const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.2,W/2,H/2,Math.max(W,H)*.75);
-    vg.addColorStop(0,hexA(th.bg[0],0)); vg.addColorStop(1,hexA(th.bg[0],.85)); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+    vg.addColorStop(0,hexA(th.bg[0],0)); vg.addColorStop(1,hexA(th.bg[0],th.image?.45:.85)); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
   } else if(state.bg==='shapes'){
     ctx.lineWidth=7*u;
     for(const s of SHAPES){
@@ -662,6 +730,60 @@ $('#groups').addEventListener('click',e=>{
   document.querySelectorAll(`.chip[data-key="${b.dataset.key}"]`).forEach(c=>c.setAttribute('aria-pressed',c===b));
   if(b.dataset.key==='font') ensureFonts().then(refresh); else refresh();
 });
+
+/* ----- Latar sendiri (warna / gambar) ----- */
+const bgPanel=$('#bgPanel');
+document.querySelector('.chip[data-key="bgMode"]').closest('.group').after(bgPanel);
+function syncBgPanel(){
+  bgPanel.hidden = state.bgMode==='theme';
+  bgPanel.querySelectorAll('[data-show]').forEach(el=>el.hidden = el.dataset.show!==state.bgMode);
+  $('#bgThumb').hidden=!bgImg; $('#bgClear').hidden=!bgImg;
+  if(bgImg) $('#bgThumb').src=bgImg.src;
+  $('#dropText').textContent = bgImg ? 'Klik atau seret untuk tukar gambar' : 'Klik atau seret gambar ke sini (JPG / PNG / WEBP)';
+  $('#overlayVal').textContent=Math.round(state.overlay*100)+'%';
+}
+$('#groups').addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="bgMode"]')) syncBgPanel(); });
+['bgColor1','bgColor2'].forEach(k=>{ $('#'+k).value=state[k]; $('#'+k).addEventListener('input',e=>{ state[k]=e.target.value; refresh(); }); });
+$('#bgSame').addEventListener('click',()=>{ state.bgColor2=state.bgColor1; $('#bgColor2').value=state.bgColor1; refresh(); });
+$('#overlayTone').value=state.overlayTone;
+$('#overlayTone').addEventListener('change',e=>{ state.overlayTone=e.target.value; refresh(); });
+$('#overlay').value=state.overlay;
+$('#overlay').addEventListener('input',e=>{ state.overlay=+e.target.value; syncBgPanel(); refresh(); });
+$('#kenburns').checked=state.kenburns;
+$('#kenburns').addEventListener('change',e=>{ state.kenburns=e.target.checked; refresh(); });
+
+function setBgImage(src, persist){
+  const img=new Image();
+  img.onload=()=>{
+    bgImg=img; syncBgPanel(); refresh();
+    if(persist){ try{ localStorage.setItem('pvg-bgimg',src); }catch(e){ /* terlalu besar untuk disimpan — tetap guna untuk sesi ini */ } }
+  };
+  img.src=src;
+}
+function loadBgFile(file){
+  if(!file || !file.type.startsWith('image/')) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const src=new Image();
+    src.onload=()=>{
+      // kecilkan ke maks 2400px supaya laju & boleh disimpan
+      const k=Math.min(1,2400/Math.max(src.naturalWidth,src.naturalHeight));
+      const c=document.createElement('canvas'); c.width=Math.round(src.naturalWidth*k); c.height=Math.round(src.naturalHeight*k);
+      c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+      setBgImage(c.toDataURL('image/jpeg',.88), true);
+    };
+    src.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+$('#bgFile').addEventListener('change',e=>{ loadBgFile(e.target.files[0]); e.target.value=''; });
+const drop=$('#drop');
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop',e=>loadBgFile(e.dataTransfer.files[0]));
+$('#bgClear').addEventListener('click',e=>{ e.preventDefault(); bgImg=null; try{ localStorage.removeItem('pvg-bgimg'); }catch(_){} syncBgPanel(); refresh(); });
+try{ const saved=localStorage.getItem('pvg-bgimg'); if(saved) setBgImage(saved,false); }catch(e){}
+syncBgPanel();
 $('#script').value=state.script;
 $('#script').addEventListener('input',e=>{ state.script=e.target.value; refresh(); });
 ['outro','handle'].forEach(k=>{ $('#'+k).value=state[k]; $('#'+k).addEventListener('input',e=>{ state[k]=e.target.value; refresh(); }); });

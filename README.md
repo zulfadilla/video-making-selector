@@ -10,6 +10,14 @@ Alat satu halaman untuk hasilkan video motion graphic: pilih gaya, tulis skrip, 
 
 > Biarkan tab terbuka semasa rakaman — video dirakam dalam masa nyata.
 
+## Latar sendiri
+Di bahagian **Sumber latar**:
+- **Ikut tema** — guna warna tema yang dipilih.
+- **Warna sendiri** — pilih 2 warna (gradien), atau tekan "Guna 1 warna sahaja" / pilih hiasan *Kosong* untuk warna padu. Warna teks dipilih automatik ikut kecerahan latar.
+- **Gambar sendiri** — klik atau seret gambar. Boleh pilih lapisan Gelap (teks putih) atau Cerah (teks hitam), kekuatan lapisan, dan zum perlahan. Gambar disimpan dalam pelayar untuk kali seterusnya.
+
+Hiasan latar (Partikel, Grid, Bentuk) boleh digabungkan dengan warna atau gambar sendiri.
+
 ## Format skrip
 | Tulis | Hasil |
 |---|---|
