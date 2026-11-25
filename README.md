@@ -1,68 +1,80 @@
-# Pemilih Video Grafik
+# Video Graphics Maker
 
-Alat satu halaman untuk hasilkan video motion graphic: pilih gaya, tulis skrip, tekan **Create Video**.
+A single-page tool for making motion-graphics videos: pick a style, write a script, press **Create Video**.
 
-## Cara guna
-1. Buka `index.html` dalam Google Chrome atau Microsoft Edge (klik dua kali pun boleh).
-2. Tulis skrip — setiap baris = satu babak.
-3. Pilih format, tema, font, animasi, latar, peralihan, kelajuan, muzik & kualiti.
-4. Tekan **▶ Pratonton** untuk tengok dulu, atau **Create Video** untuk rakam dan muat turun (MP4 di Chrome terkini, WebM di pelayar lain).
+Everything runs in your browser. No server, no account and no uploads.
 
-> Biarkan tab terbuka semasa rakaman — video dirakam dalam masa nyata.
+## How to use
+1. Open `index.html` in Google Chrome or Microsoft Edge (double-clicking it works).
+2. Pick the **video length** (Auto, or 15s up to 2 min).
+3. Write the script. Each line is one scene.
+4. Optionally add a voiceover, images, music and your own background.
+5. Press **▶ Preview** to check it, or **Create Video** to record and download it. Chrome and Edge give MP4; other browsers give WebM.
 
-## Latar sendiri
-Di bahagian **Sumber latar**:
-- **Ikut tema** — guna warna tema yang dipilih.
-- **Warna sendiri** — pilih 2 warna (gradien), atau tekan "Guna 1 warna sahaja" / pilih hiasan *Kosong* untuk warna padu. Warna teks dipilih automatik ikut kecerahan latar.
-- **Gambar sendiri** — klik atau seret satu atau lebih gambar sekaligus.
-  - Susun turutan dengan **seret** thumbnail, atau butang **‹ ›**. Butang **×** buang gambar.
-  - **Tukar gambar**: *Setiap babak* (gambar 1 → babak 1, gambar 2 → babak 2, …, berulang) atau *Sama rata sepanjang video*.
-  - Peralihan antara gambar guna crossfade; *Zum perlahan* bergerak masuk/keluar berselang-seli.
-  - Lapisan Gelap (teks putih) atau Cerah (teks hitam), dan kekuatan lapisan.
-- Gambar dan muzik sendiri disimpan dalam pelayar (IndexedDB) untuk kali seterusnya.
+> Keep the tab open while recording. The video is recorded in real time.
 
-## Panjang video (pilihan paling atas)
-Pilih **Auto** (ikut panjang skrip, maksimum 2 minit) atau tetapkan 15s, 30s, 45s, 1 min, 1.5 min atau 2 min. Semua babak diregang/dipendekkan supaya tepat dengan panjang yang dipilih.
+## Script format
+| Write | Result |
+|---|---|
+| `# Title` | Big title scene with an accent underline |
+| `- item` | List; items appear one by one (a line ending in `:` right before it becomes the list heading) |
+| `*word*` | Word highlighted in the accent colour |
+| Short line with a number (`60%`, `$5,000`, `33 million`) | Big number that counts up |
+| `[image: logo, pop, left]` | Image inside the scene (see below) |
+| Normal line | Text scene |
 
-## Muzik latar
-Pilih *Chill*, *Upbeat* (dijana automatik) atau **Muzik sendiri** — klik/seret fail MP3, WAV, M4A atau OGG. Boleh atur kelantangan, ulang muzik jika lebih pendek daripada video, dan pilih saat mula. Muzik di-fade out pada hujung video.
+## Video length
+Choose **Auto** (follows the script, max 2 minutes) or a fixed length: 15s, 30s, 45s, 1 min, 1.5 min or 2 min. All scenes are stretched or shortened to fit.
 
-Hiasan latar (Partikel, Grid, Bentuk) boleh digabungkan dengan warna atau gambar sendiri.
+## Voiceover
+- **Record your voice:** each scene has a 🎙 Record button. Read the scene's text, then press ■ Stop. Each scene is made at least as long as your recording, and silence at the start and end is trimmed. You can listen (▶), redo or remove a recording.
+- **Voice file:** upload one MP3, WAV or M4A for the whole video, for example an AI voice from ElevenLabs or CapCut. Tick "Match video length to the voice" to make the video as long as the voice.
+- Background music is lowered automatically while there is a voice.
+- The browser's built-in robot voice can't be recorded into a video file, so it isn't offered.
 
-## Suara latar (voiceover)
-- **Rakam suara sendiri** — setiap babak ada butang 🎙 Rakam. Baca teks babak, tekan ■ Henti. Babak dipanjangkan ikut suara; senyap di awal & hujung dipotong automatik. Boleh dengar (▶), rakam semula, atau buang.
-- **Fail suara** — muat naik satu fail MP3/WAV/M4A untuk keseluruhan video (contoh suara AI dari ElevenLabs/CapCut). Tanda "Panjang video ikut panjang suara" supaya video sama panjang dengan suara.
-- Muzik latar diperlahankan automatik bila ada suara.
-- Suara robot terbina dalam pelayar tidak boleh dirakam ke dalam fail video, sebab itu ia tidak disediakan.
+## Images in scenes
+Upload images, logos or icons under **Images in scenes**, below the script. Each image is named after its file name. To add one to the script:
+1. Choose an animation, position, size and motion.
+2. Put the cursor in the script.
+3. Click **+ Insert** on the image.
 
-## Gambar dalam babak
-Muat naik gambar, logo atau ikon di bahagian **Gambar dalam babak** (bawah skrip). Setiap gambar dapat nama (dari nama fail). Pilih animasi/posisi/saiz/gerakan, letak kursor dalam skrip, dan klik **+ Sisip** — atau taip sendiri:
+Or type the command yourself:
 
 ```
-[gambar: logo, lantun, kanan, besar, terapung, 1s]
+[image: logo, bounce, right, large, float, 1s]
 ```
 
-| Jenis | Pilihan |
+| Type | Options |
 |---|---|
-| Animasi masuk | `pop` `pudar` `zum` `dari-kiri` `dari-kanan` `dari-atas` `dari-bawah` `putar` `lantun` |
-| Posisi | `tengah` `atas` `bawah` `kiri` `kanan` `penuh` (gambar penuh skrin di belakang teks) |
-| Saiz | `kecil` `sederhana` `besar` |
-| Gerakan berterusan | `terapung` `goyang` `pusing` |
-| Masa | `1s`, `0.5s` … = muncul selepas sekian saat |
+| Entrance animation | `pop` `fade` `zoom` `from-left` `from-right` `from-top` `from-bottom` `rotate` `bounce` |
+| Position | `center` `top` `bottom` `left` `right` `full` (full-screen image behind the text) |
+| Size | `small` `medium` `large` |
+| Continuous motion | `float` `wiggle` `spin` |
+| Timing | `1s`, `0.5s`, … = appear after that many seconds |
 
-- Nama boleh juga nombor: `[gambar: 2]` = gambar kedua dalam senarai.
-- Baris yang ada gambar sahaja → babak gambar besar.
-- Beberapa arahan gambar dalam satu baris → gambar diletak bersebelahan.
-- Dalam senarai, `- [gambar: ikon] Item` → ikon menggantikan bulatan.
-- Skrin menegak (9:16): posisi `kiri`/`kanan` jadi `atas`/`bawah` secara automatik.
+- You can use a number instead of a name: `[image: 2]` is the second image in the list.
+- A line with only an image becomes a big image scene.
+- Several image commands on one line place the images side by side.
+- In a list, `- [image: icon] Item` uses the icon instead of the bullet.
+- In 9:16 videos, `left` and `right` become `top` and `bottom` automatically.
+- Malay commands from older versions, such as `[gambar: logo, lantun, kiri]`, still work.
 
-## Format skrip
-| Tulis | Hasil |
-|---|---|
-| `# Tajuk` | Babak tajuk besar dengan garisan aksen |
-| `- item` | Senarai; item muncul satu persatu (baris sebelum yang berakhir `:` jadi tajuk senarai) |
-| `*perkataan*` | Perkataan ditonjolkan dengan warna aksen |
-| Baris pendek dengan nombor (`60%`, `RM 5,000`, `33 juta`) | Nombor besar dikira naik secara animasi |
-| Baris biasa | Babak teks |
+## Style options
+- **Colour themes (18):**
+  - Dark: Neon Night, Dark Elegant, Green Nature, Sunset, Ocean, Aurora, Royal Purple, Crimson Night, Cyber Yellow, Coffee, Retro Wave, Monochrome
+  - Light: Corporate, Pop Bright, Minimal Paper, Candy Pastel, Fresh Mint, Sky Blue
+  - You can also set a custom accent colour.
+- **Background source:**
+  - **Theme**
+  - **Custom colour:** one or two colours.
+  - **Custom image:** several images in any order, shown one per scene or spread evenly. Includes a crossfade, slow zoom and a dark or light overlay.
+- **Background decoration:** Gradient, Particles, Grid, Shapes, None
+- **Text animation:** Word pop, Fade up, Typewriter, Slide, Zoom, Random
+- **Scene transition:** Fade, Wipe, Slide, Zoom
+- **Transition sound:** None, Whoosh, Swoosh, Pop, Click, Ding, Swipe, Riser, Glitch, Impact. Click one to hear it.
+- **Background music:**
+  - Chill or Upbeat, generated in the browser
+  - Your own MP3, WAV, M4A or OGG, with volume, loop and start-at-second controls
+- **Other:** format (16:9, 9:16, 1:1, 4:5), font, pace, quality (720p or 1080p), closing text, watermark, progress bar
 
-Semua diproses dalam pelayar — tiada pelayan, tiada muat naik.
+Images, music and voice recordings are saved in the browser (IndexedDB), so they are still there next time you open the tool.

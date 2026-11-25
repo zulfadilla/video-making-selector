@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ms">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pemilih Video Grafik</title>
+<title>Video Graphics Maker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;800&family=Montserrat:wght@500;900&family=Playfair+Display:wght@500;800&family=Poppins:wght@500;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -114,109 +114,109 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="logo">▶</span> Pemilih Video Grafik</div>
-  <div class="hint">Pilih gaya → tulis skrip → tekan <b>Create Video</b></div>
+  <div class="brand"><span class="logo">▶</span> Video Graphics Maker</div>
+  <div class="hint">Pick a style → write your script → press <b>Create Video</b></div>
 </header>
 
 <main class="app">
   <fieldset id="controls">
     <div class="card">
-      <div class="card-h"><h2>1. Panjang video</h2><span id="lenInfo" class="muted"></span></div>
+      <div class="card-h"><h2>1. Video length</h2><span id="lenInfo" class="muted"></span></div>
       <div id="lengthBox" class="chips"></div>
     </div>
 
     <div class="card">
-      <div class="card-h"><h2>2. Skrip</h2><span id="sceneInfo" class="muted"></span></div>
+      <div class="card-h"><h2>2. Script</h2><span id="sceneInfo" class="muted"></span></div>
       <textarea id="script" spellcheck="false"></textarea>
       <details class="help">
-        <summary>Cara tulis skrip</summary>
+        <summary>How to write a script</summary>
         <ul>
-          <li>Setiap baris = satu babak (scene).</li>
-          <li><code># Tajuk</code> → babak tajuk besar.</li>
-          <li><code>- item</code> → senarai; item muncul satu persatu. Baris sebelumnya yang berakhir dengan <code>:</code> jadi tajuk senarai.</li>
-          <li><code>*perkataan*</code> → ditonjolkan dengan warna aksen.</li>
-          <li>Baris pendek ada nombor (<code>60%</code>, <code>RM 5,000</code>, <code>33 juta</code>) → nombor dikira naik secara animasi.</li>
-          <li>Baris kosong memisahkan senarai.</li>
-          <li><code>[gambar: logo, pop, kiri]</code> → gambar muncul dalam babak (lihat "Gambar dalam babak" di bawah).</li>
-          <li>Baris dengan gambar sahaja → babak gambar penuh. <code>- [gambar: ikon] Item</code> → ikon ganti bulatan senarai.</li>
+          <li>Each line = one scene.</li>
+          <li><code># Title</code> → big title scene.</li>
+          <li><code>- item</code> → list; items appear one by one. A line ending with <code>:</code> right before it becomes the list heading.</li>
+          <li><code>*word*</code> → highlighted in the accent colour.</li>
+          <li>Short lines with a number (<code>60%</code>, <code>$5,000</code>, <code>33 million</code>) → the number counts up with animation.</li>
+          <li>An empty line ends a list.</li>
+          <li><code>[image: logo, pop, left]</code> → an image appears in the scene (see "Images in scenes" below).</li>
+          <li>A line with only an image → full image scene. <code>- [image: icon] Item</code> → icon replaces the list bullet.</li>
         </ul>
       </details>
       <div id="sceneList" class="scene-list"></div>
 
       <div class="subsec">
-        <div class="card-h"><h3>Gambar dalam babak</h3><span class="muted small">muncul &amp; bergerak seperti teks</span></div>
+        <div class="card-h"><h3>Images in scenes</h3><span class="muted small">appear &amp; move like text</span></div>
         <label class="drop" id="simgDrop">
           <input type="file" id="simgFile" accept="image/*" multiple hidden>
-          <span id="simgText">Klik atau seret gambar / logo / ikon ke sini (PNG lutsinar pun boleh)</span>
+          <span id="simgText">Click or drag images / logos / icons here (transparent PNG works)</span>
         </label>
         <div id="simgList" class="img-list"></div>
         <div id="simgOpts" hidden>
           <div class="subrow">
-            <label class="tog">Animasi <select id="simgAnim">
-              <option value="pop">Pop</option><option value="pudar">Pudar</option><option value="zum">Zum</option>
-              <option value="dari-kiri">Dari kiri</option><option value="dari-kanan">Dari kanan</option>
-              <option value="dari-atas">Dari atas</option><option value="dari-bawah">Dari bawah</option>
-              <option value="putar">Putar</option><option value="lantun">Lantun</option></select></label>
-            <label class="tog">Posisi <select id="simgPos">
-              <option value="tengah">Tengah</option><option value="atas">Atas teks</option><option value="bawah">Bawah teks</option>
-              <option value="kiri">Kiri</option><option value="kanan">Kanan</option><option value="penuh">Penuh skrin</option></select></label>
-            <label class="tog">Saiz <select id="simgSize">
-              <option value="kecil">Kecil</option><option value="sederhana" selected>Sederhana</option><option value="besar">Besar</option></select></label>
-            <label class="tog">Gerakan <select id="simgMove">
-              <option value="">Tiada</option><option value="terapung">Terapung</option><option value="goyang">Goyang</option><option value="pusing">Pusing</option></select></label>
+            <label class="tog">Animation <select id="simgAnim">
+              <option value="pop">Pop</option><option value="fade">Fade</option><option value="zoom">Zoom</option>
+              <option value="from-left">From left</option><option value="from-right">From right</option>
+              <option value="from-top">From top</option><option value="from-bottom">From bottom</option>
+              <option value="rotate">Rotate</option><option value="bounce">Bounce</option></select></label>
+            <label class="tog">Position <select id="simgPos">
+              <option value="center">Center</option><option value="top">Above text</option><option value="bottom">Below text</option>
+              <option value="left">Left</option><option value="right">Right</option><option value="full">Full screen</option></select></label>
+            <label class="tog">Size <select id="simgSize">
+              <option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option></select></label>
+            <label class="tog">Motion <select id="simgMove">
+              <option value="">None</option><option value="float">Float</option><option value="wiggle">Wiggle</option><option value="spin">Spin</option></select></label>
           </div>
-          <p class="muted note">Letak kursor dalam skrip, kemudian klik <b>+ Sisip</b> pada gambar. Arahan boleh diubah terus dalam skrip, contoh <code>[gambar: logo, lantun, kanan, besar, terapung, 1s]</code> — <code>1s</code> = muncul selepas 1 saat.</p>
+          <p class="muted note">Place the cursor in the script, then click <b>+ Insert</b> on an image. You can edit the command directly in the script, e.g. <code>[image: logo, bounce, right, large, float, 1s]</code> — <code>1s</code> = appear after 1 second.</p>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>3. Suara latar (voiceover)</h2>
+      <h2>3. Voiceover</h2>
       <div id="voModeBox" class="chips"></div>
       <div id="voMicPanel" class="subpanel" style="margin-top:14px" hidden>
-        <p class="muted note" style="margin:0 0 8px">Tekan <b>🎙 Rakam</b> pada setiap babak, baca teksnya, kemudian tekan <b>■ Henti</b>. Babak akan dipanjangkan ikut suara anda. Senyap di awal &amp; hujung dipotong automatik.</p>
+        <p class="muted note" style="margin:0 0 8px">Press <b>🎙 Record</b> on each scene, read the text, then press <b>■ Stop</b>. Scenes stretch to fit your voice. Silence at the start &amp; end is trimmed automatically.</p>
         <div id="voList" class="vo-list"></div>
       </div>
       <div id="voFilePanel" class="subpanel" style="margin-top:14px" hidden>
         <label class="drop" id="voDrop">
           <input type="file" id="voFile" accept="audio/*" hidden>
-          <span id="voText">Klik atau seret fail suara (MP3 / WAV / M4A)</span>
+          <span id="voText">Click or drag a voice file (MP3 / WAV / M4A)</span>
         </label>
         <div class="subrow">
-          <label class="tog"><input type="checkbox" id="voFit"> Panjang video ikut panjang suara (bila Panjang video = Auto)</label>
-          <button type="button" class="btn small" id="voClear" hidden>Buang suara</button>
+          <label class="tog"><input type="checkbox" id="voFit"> Match video length to the voice (when Video length = Auto)</label>
+          <button type="button" class="btn small" id="voClear" hidden>Remove voice</button>
         </div>
       </div>
-      <p class="muted note" style="margin:12px 0 0">Muzik latar diperlahankan automatik semasa ada suara. Suara robot pelayar tidak boleh dirakam ke dalam fail video — untuk suara AI, jana MP3 di laman text-to-speech (contoh ElevenLabs, CapCut) dan guna <b>Fail suara</b>.</p>
+      <p class="muted note" style="margin:12px 0 0">Background music is lowered automatically while there is a voice. The browser's built-in robot voice can't be recorded into a video file — for an AI voice, generate an MP3 on a text-to-speech site (e.g. ElevenLabs, CapCut) and use <b>Voice file</b>.</p>
     </div>
 
     <div class="card">
-      <h2>4. Pilih gaya</h2>
+      <h2>4. Style</h2>
       <div id="groups"></div>
       <div id="bgPanel" class="subpanel">
         <div data-show="color" class="subrow">
-          <label class="tog">Warna 1 <input type="color" id="bgColor1"></label>
-          <label class="tog">Warna 2 <input type="color" id="bgColor2"></label>
-          <button type="button" class="btn small" id="bgSame">Guna 1 warna sahaja</button>
-          <span class="muted note">Hiasan "Kosong" = warna padu. Warna teks dipilih automatik.</span>
+          <label class="tog">Colour 1 <input type="color" id="bgColor1"></label>
+          <label class="tog">Colour 2 <input type="color" id="bgColor2"></label>
+          <button type="button" class="btn small" id="bgSame">Use a single colour</button>
+          <span class="muted note">Decoration "None" = solid colour. Text colour is chosen automatically.</span>
         </div>
         <div data-show="image">
           <label class="drop" id="drop">
             <input type="file" id="bgFile" accept="image/*" multiple hidden>
-            <span id="dropText">Klik atau seret gambar ke sini — boleh pilih banyak sekaligus (JPG / PNG / WEBP)</span>
+            <span id="dropText">Click or drag images here — you can pick several at once (JPG / PNG / WEBP)</span>
           </label>
           <div id="imgList" class="img-list"></div>
-          <p id="imgHint" class="muted note" hidden>Seret gambar untuk susun turutan, atau guna butang ‹ ›. Gambar 1 muncul dahulu.</p>
+          <p id="imgHint" class="muted note" hidden>Drag images to reorder them, or use the ‹ › buttons. Image 1 appears first.</p>
           <div class="subrow">
-            <label class="tog">Tukar gambar
-              <select id="imgMode"><option value="scene">Setiap babak</option><option value="even">Sama rata sepanjang video</option></select>
+            <label class="tog">Change image
+              <select id="imgMode"><option value="scene">Every scene</option><option value="even">Evenly across the video</option></select>
             </label>
-            <label class="tog">Lapisan
-              <select id="overlayTone"><option value="dark">Gelap (teks putih)</option><option value="light">Cerah (teks hitam)</option></select>
+            <label class="tog">Overlay
+              <select id="overlayTone"><option value="dark">Dark (white text)</option><option value="light">Light (black text)</option></select>
             </label>
-            <label class="tog">Kekuatan <input type="range" id="overlay" min="0" max="0.85" step="0.05"> <span id="overlayVal" class="muted"></span></label>
-            <label class="tog"><input type="checkbox" id="kenburns"> Zum perlahan</label>
-            <button type="button" class="btn small" id="bgClear" hidden>Buang semua gambar</button>
+            <label class="tog">Strength <input type="range" id="overlay" min="0" max="0.85" step="0.05"> <span id="overlayVal" class="muted"></span></label>
+            <label class="tog"><input type="checkbox" id="kenburns"> Slow zoom</label>
+            <button type="button" class="btn small" id="bgClear" hidden>Remove all images</button>
           </div>
         </div>
       </div>
@@ -224,47 +224,46 @@
         <div data-show="custom">
           <label class="drop" id="musicDrop">
             <input type="file" id="musicFile" accept="audio/*" hidden>
-            <span id="musicText">Klik atau seret fail muzik ke sini (MP3 / WAV / M4A / OGG)</span>
+            <span id="musicText">Click or drag a music file here (MP3 / WAV / M4A / OGG)</span>
           </label>
         </div>
         <div class="subrow">
-          <label class="tog">Kelantangan <input type="range" id="musicVol" min="0" max="1" step="0.05"> <span id="musicVolVal" class="muted"></span></label>
-          <label class="tog" data-show="custom"><input type="checkbox" id="musicLoop"> Ulang jika muzik lebih pendek</label>
-          <label class="tog" data-show="custom">Mula pada saat <input type="number" id="musicOffset" min="0" step="1" style="width:70px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px"></label>
-          <button type="button" class="btn small" id="musicClear" data-show="custom" hidden>Buang muzik</button>
+          <label class="tog">Volume <input type="range" id="musicVol" min="0" max="1" step="0.05"> <span id="musicVolVal" class="muted"></span></label>
+          <label class="tog" data-show="custom"><input type="checkbox" id="musicLoop"> Loop if the music is shorter</label>
+          <label class="tog" data-show="custom">Start at second <input type="number" id="musicOffset" min="0" step="1" style="width:70px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:5px 8px"></label>
+          <button type="button" class="btn small" id="musicClear" data-show="custom" hidden>Remove music</button>
         </div>
       </div>
       <div class="row2">
-        <label class="field"><span>Teks penutup</span><input id="outro" placeholder="Kosongkan jika tak perlu"></label>
-        <label class="field"><span>Watermark / handle</span><input id="handle" placeholder="@akaunanda"></label>
+        <label class="field"><span>Closing text</span><input id="outro" placeholder="Leave empty if not needed"></label>
+        <label class="field"><span>Watermark / handle</span><input id="handle" placeholder="@youraccount"></label>
       </div>
       <div class="toggles">
-        <label class="tog"><input type="checkbox" id="sfx"> Bunyi whoosh peralihan</label>
-        <label class="tog"><input type="checkbox" id="progress"> Bar progres</label>
-        <label class="tog"><input type="checkbox" id="stats"> Animasi nombor automatik</label>
-        <label class="tog"><input type="checkbox" id="customAccent"> Warna aksen sendiri <input type="color" id="accent"></label>
+        <label class="tog"><input type="checkbox" id="progress"> Progress bar</label>
+        <label class="tog"><input type="checkbox" id="stats"> Auto number animation</label>
+        <label class="tog"><input type="checkbox" id="customAccent"> Custom accent colour <input type="color" id="accent"></label>
       </div>
     </div>
   </fieldset>
 
   <section>
     <div class="card sticky">
-      <h2>5. Pratonton &amp; hasilkan</h2>
+      <h2>5. Preview &amp; create</h2>
       <div class="stage"><canvas id="cv"></canvas></div>
       <div class="transport">
-        <button id="playBtn" class="btn">▶ Pratonton</button>
-        <input type="range" id="scrub" min="0" max="10" step="0.01" value="0" aria-label="Masa">
+        <button id="playBtn" class="btn">▶ Preview</button>
+        <input type="range" id="scrub" min="0" max="10" step="0.01" value="0" aria-label="Time">
         <span id="time">0:00 / 0:00</span>
       </div>
       <button id="createBtn" class="btn primary big">Create Video</button>
       <div id="status" class="status" hidden>
         <div class="bar"><i></i></div>
         <p id="statusText"></p>
-        <button id="cancelBtn" class="btn small">Batal</button>
+        <button id="cancelBtn" class="btn small">Cancel</button>
       </div>
       <div id="result" class="result" hidden>
         <video controls playsinline></video>
-        <a id="dl" class="btn primary">Muat turun video</a>
+        <a id="dl" class="btn primary">Download video</a>
         <p id="resultInfo" class="muted"></p>
       </div>
     </div>
@@ -272,14 +271,26 @@
 </main>
 
 <script>
-/* ===================== Konfigurasi pilihan ===================== */
+/* ===================== Options ===================== */
 const THEMES = {
-  neon:     {name:'Neon Malam',   bg:['#0b0620','#2a0f5c'], text:'#ffffff', accent:'#00e5ff', accent2:'#ff2bd6', dark:true},
-  korporat: {name:'Korporat',     bg:['#f7f9fc','#dbe4f3'], text:'#0f1b33', accent:'#2563eb', accent2:'#10b981', dark:false},
-  pop:      {name:'Pop Ceria',    bg:['#ffd84d','#ff8a3d'], text:'#1b1b1b', accent:'#d1094f', accent2:'#ffffff', dark:false},
-  elegan:   {name:'Elegan Gelap', bg:['#0e0e10','#2a251c'], text:'#f4ead5', accent:'#d4af37', accent2:'#8c6d1f', dark:true},
-  alam:     {name:'Alam Hijau',   bg:['#0c3b2e','#1d6b4f'], text:'#eefff6', accent:'#b6f36a', accent2:'#ffd166', dark:true},
-  senja:    {name:'Senja',        bg:['#ff512f','#c2185b'], text:'#ffffff', accent:'#ffe066', accent2:'#2b1055', dark:true, shadow:true},
+  neon:     {name:'Neon Night',    bg:['#0b0620','#2a0f5c'], text:'#ffffff', accent:'#00e5ff', accent2:'#ff2bd6', dark:true},
+  korporat: {name:'Corporate',     bg:['#f7f9fc','#dbe4f3'], text:'#0f1b33', accent:'#2563eb', accent2:'#10b981', dark:false},
+  pop:      {name:'Pop Bright',    bg:['#ffd84d','#ff8a3d'], text:'#1b1b1b', accent:'#d1094f', accent2:'#ffffff', dark:false},
+  elegan:   {name:'Dark Elegant',  bg:['#0e0e10','#2a251c'], text:'#f4ead5', accent:'#d4af37', accent2:'#8c6d1f', dark:true},
+  alam:     {name:'Green Nature',  bg:['#0c3b2e','#1d6b4f'], text:'#eefff6', accent:'#b6f36a', accent2:'#ffd166', dark:true},
+  senja:    {name:'Sunset',        bg:['#ff512f','#c2185b'], text:'#ffffff', accent:'#ffe066', accent2:'#2b1055', dark:true, shadow:true},
+  ocean:    {name:'Ocean',         bg:['#03254c','#0a6fa6'], text:'#ffffff', accent:'#7df9ff', accent2:'#ffd166', dark:true},
+  aurora:   {name:'Aurora',        bg:['#0f172a','#134e4a'], text:'#ecfeff', accent:'#5eead4', accent2:'#a78bfa', dark:true},
+  royal:    {name:'Royal Purple',  bg:['#2e1065','#6d28d9'], text:'#ffffff', accent:'#fbbf24', accent2:'#f472b6', dark:true},
+  crimson:  {name:'Crimson Night', bg:['#14000a','#4a0414'], text:'#fff1f2', accent:'#ff3b5c', accent2:'#ffb3c1', dark:true},
+  cyber:    {name:'Cyber Yellow',  bg:['#0d0d0d','#1f1f1f'], text:'#ffffff', accent:'#fcee0a', accent2:'#00f0ff', dark:true},
+  coffee:   {name:'Coffee',        bg:['#2b1d14','#5a3d2b'], text:'#f5e6d3', accent:'#e8a66b', accent2:'#c97b4a', dark:true},
+  retro:    {name:'Retro Wave',    bg:['#2d1b69','#c2416b'], text:'#fff7e6', accent:'#ffd23f', accent2:'#3bceac', dark:true, shadow:true},
+  mono:     {name:'Monochrome',    bg:['#0a0a0a','#2b2b2b'], text:'#ffffff', accent:'#d4d4d4', accent2:'#737373', dark:true},
+  paper:    {name:'Minimal Paper', bg:['#fbf8f1','#efe8d8'], text:'#1f1f1f', accent:'#e4572e', accent2:'#1f1f1f', dark:false},
+  candy:    {name:'Candy Pastel',  bg:['#ffd6e8','#c9e4ff'], text:'#3b1d4a', accent:'#d6197a', accent2:'#7c3aed', dark:false},
+  mint:     {name:'Fresh Mint',    bg:['#e6fff6','#b8f2e6'], text:'#073b3a', accent:'#0b8a67', accent2:'#ff6b6b', dark:false},
+  sky:      {name:'Sky Blue',      bg:['#e0f2ff','#a5d8ff'], text:'#0b2545', accent:'#1d4ed8', accent2:'#f59e0b', dark:false},
 };
 const FONTS = {
   poppins:    {name:'Poppins',      family:'Poppins',          bold:800, reg:500},
@@ -291,45 +302,53 @@ const FONTS = {
 };
 const GROUPS = [
   {key:'format', label:'Format', opts:[['16:9','16:9','YouTube'],['9:16','9:16','TikTok / Reels'],['1:1','1:1','Instagram'],['4:5','4:5','Feed']]},
-  {key:'theme',  label:'Tema warna', opts:Object.entries(THEMES).map(([k,t])=>[k,t.name])},
+  {key:'theme',  label:'Colour theme', opts:Object.entries(THEMES).map(([k,t])=>[k,t.name])},
   {key:'font',   label:'Font', opts:Object.entries(FONTS).map(([k,f])=>[k,f.name])},
-  {key:'anim',   label:'Animasi teks', opts:[['pop','Pop kata'],['fade','Fade naik'],['type','Taip'],['slide','Luncur'],['zoom','Zum'],['random','Rawak']]},
-  {key:'bgMode', label:'Sumber latar', opts:[['theme','Ikut tema'],['color','Warna sendiri'],['image','Gambar sendiri']]},
-  {key:'bg',     label:'Hiasan latar', opts:[['gradient','Gradien'],['particles','Partikel'],['grid','Grid'],['shapes','Bentuk'],['solid','Kosong']]},
-  {key:'trans',  label:'Peralihan babak', opts:[['fade','Pudar'],['wipe','Sapuan'],['slide','Luncur'],['zoom','Zum']]},
-  {key:'speed',  label:'Kelajuan', opts:[['slow','Perlahan'],['normal','Sederhana'],['fast','Laju']]},
-  {key:'music',  label:'Muzik latar', opts:[['none','Tiada'],['chill','Chill'],['upbeat','Upbeat'],['custom','Muzik sendiri']]},
-  {key:'quality',label:'Kualiti', opts:[['720','720p','lebih cepat'],['1080','1080p','HD']]},
+  {key:'anim',   label:'Text animation', opts:[['pop','Word pop'],['fade','Fade up'],['type','Typewriter'],['slide','Slide'],['zoom','Zoom'],['random','Random']]},
+  {key:'bgMode', label:'Background source', opts:[['theme','Theme'],['color','Custom colour'],['image','Custom image']]},
+  {key:'bg',     label:'Background decoration', opts:[['gradient','Gradient'],['particles','Particles'],['grid','Grid'],['shapes','Shapes'],['solid','None']]},
+  {key:'trans',  label:'Scene transition', opts:[['fade','Fade'],['wipe','Wipe'],['slide','Slide'],['zoom','Zoom']]},
+  {key:'sfx',    label:'Transition sound', opts:[['none','None'],['whoosh','Whoosh'],['swoosh','Swoosh'],['pop','Pop'],['click','Click'],['ding','Ding'],['swipe','Swipe'],['riser','Riser'],['glitch','Glitch'],['impact','Impact']]},
+  {key:'speed',  label:'Pace', opts:[['slow','Slow'],['normal','Normal'],['fast','Fast']]},
+  {key:'music',  label:'Background music', opts:[['none','None'],['chill','Chill'],['upbeat','Upbeat'],['custom','Your own music']]},
+  {key:'quality',label:'Quality', opts:[['720','720p','faster'],['1080','1080p','HD']]},
 ];
-const LENGTH_GROUP = {key:'length', opts:[['auto','Auto','ikut skrip'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]};
-const VO_GROUP = {key:'voMode', opts:[['none','Tiada'],['mic','Rakam suara sendiri','setiap babak'],['file','Fail suara','MP3 / WAV']]};
-const DEFAULT_SCRIPT = `# 5 Fakta Menarik Tentang Malaysia
-Malaysia mempunyai lebih 33 juta penduduk
-Kira-kira 55% tanah Malaysia dilitupi hutan
-Tempat yang *wajib* dilawati:
-- Menara Berkembar Petronas
-- Gunung Kinabalu
-- Pulau Langkawi
-Jom *terokai* Malaysia bersama kami!`;
+const LENGTH_GROUP = {key:'length', opts:[['auto','Auto','from script'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]};
+const VO_GROUP = {key:'voMode', opts:[['none','None'],['mic','Record your voice','per scene'],['file','Voice file','MP3 / WAV']]};
+const DEFAULT_SCRIPT = `# 5 Amazing Facts About the Ocean
+The ocean covers about 71% of our planet
+More than 80% of the ocean is still unexplored
+Creatures you *must* know:
+- Blue whale
+- Giant squid
+- Octopus
+Let's *protect* our oceans together!`;
+const OLD_DEFAULTS = {script:/^# 5 Fakta Menarik Tentang Malaysia/, outro:'Terima kasih kerana menonton!', handle:'@akaunanda'};
 
 const state = {
   format:'16:9', theme:'neon', font:'poppins', anim:'pop', bg:'gradient', trans:'fade', speed:'normal',
-  music:'chill', quality:'1080', sfx:true, progress:true, stats:true, customAccent:false, accent:'#00e5ff',
-  outro:'Terima kasih kerana menonton!', handle:'@akaunanda', script:DEFAULT_SCRIPT,
+  music:'chill', quality:'1080', sfx:'whoosh', progress:true, stats:true, customAccent:false, accent:'#00e5ff',
+  outro:'Thanks for watching!', handle:'@youraccount', script:DEFAULT_SCRIPT,
   bgMode:'theme', bgColor1:'#1e3a8a', bgColor2:'#7c3aed', overlay:0.45, overlayTone:'dark', kenburns:true,
   imgMode:'scene', length:'auto', musicVol:0.8, musicLoop:true, musicOffset:0, voMode:'none', voFit:true,
 };
-const MAX_LEN = 120; // had panjang video (saat)
+const MAX_LEN = 120; // max video length (seconds)
 try { Object.assign(state, JSON.parse(localStorage.getItem('pvg-state')||'{}')); } catch(e){}
+// migrate settings saved by older (Malay) versions
+if(typeof state.sfx==='boolean') state.sfx = state.sfx ? 'whoosh' : 'none';
+if(OLD_DEFAULTS.script.test(state.script)) state.script=DEFAULT_SCRIPT;
+if(state.outro===OLD_DEFAULTS.outro) state.outro='Thanks for watching!';
+if(state.handle===OLD_DEFAULTS.handle) state.handle='@youraccount';
+if(!THEMES[state.theme]) state.theme='neon';
 const save = () => { try { localStorage.setItem('pvg-state', JSON.stringify(state)); } catch(e){} };
-let bgImgs = [];     // gambar latar sendiri: [{img, blob}] ikut turutan
-let musicBuf = null; // muzik sendiri (AudioBuffer)
+let bgImgs = [];     // custom background images: [{img, blob}] in order
+let musicBuf = null; // custom music (AudioBuffer)
 let musicName = '';
-let sceneImgs = [];       // gambar dalam babak: [{name, blob, img, opaque}]
-const voClips = new Map(); // suara setiap babak: key -> {blob, buf, off, dur}
-let voFile = null;        // fail suara penuh: {name, blob, buf, off, dur}
+let sceneImgs = [];       // images in scenes: [{name, blob, img, opaque}]
+const voClips = new Map(); // per-scene voice clips: key -> {blob, buf, off, dur}
+let voFile = null;        // full voiceover file: {name, blob, buf, off, dur}
 
-/* Simpanan fail besar (gambar, muzik) dalam IndexedDB pelayar */
+/* Large files (images, music, voice) are stored in the browser's IndexedDB */
 const idb = (() => {
   let dbp;
   const db = () => dbp ??= new Promise((res,rej)=>{ const r=indexedDB.open('pvg',1); r.onupgradeneeded=()=>r.result.createObjectStore('files'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); });
@@ -342,7 +361,7 @@ const idb = (() => {
   };
 })();
 
-/* ===================== Utiliti ===================== */
+/* ===================== Utilities ===================== */
 const $ = s => document.querySelector(s);
 const clamp = (v,a=0,b=1) => Math.max(a,Math.min(b,v));
 const easeOutCubic = x => 1-Math.pow(1-x,3);
@@ -371,7 +390,7 @@ function theme(){
     t.shadow=true; t.image=true;
   }
   if(state.bgMode!=='theme' && !state.customAccent){
-    // pastikan warna aksen cukup kontras dengan latar sendiri
+    // make sure the accent colour has enough contrast with a custom background
     const bgL = t.image ? (t.dark ? .03 : .9) : (luminance(t.bg[0])+luminance(t.bg[1]))/2;
     const ratio = c => { const l=luminance(c); return (Math.max(l,bgL)+.05)/(Math.min(l,bgL)+.05); };
     for(let k=1;k<=8 && ratio(t.accent)<3;k++) t.accent=mixHex(THEMES[state.theme].accent,t.text,k*.12);
@@ -381,7 +400,7 @@ function theme(){
 function fontStr(size,bold){ const f=FONTS[state.font]; return `${bold?f.bold:f.reg} ${size}px "${f.family}", system-ui, sans-serif`; }
 const tr = s => FONTS[state.font].upper ? s.toUpperCase() : s;
 
-/* ===================== Kanvas ===================== */
+/* ===================== Canvas ===================== */
 const cv = $('#cv'), ctx = cv.getContext('2d');
 let W=1920, H=1080;
 const U = () => Math.min(W,H)/1080;
@@ -392,14 +411,14 @@ function dims(){
 }
 function applyDims(){ ({W,H}=dims()); if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; } }
 
-/* ===================== Parse skrip → babak ===================== */
+/* ===================== Parse script → scenes ===================== */
 function findStat(l){
   if(wc(l)>16) return null;
-  const m = l.match(/(RM\s?|\$|USD\s?)?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s?(%|juta|ribu|bilion|billion|million|k|K|x|\+)?/);
+  const m = l.match(/(RM\s?|\$|USD\s?|€|£)?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s?(%|thousand|million|billion|trillion|juta|ribu|bilion|k|K|M|B|x|\+)?(?![a-z])/i);
   if(!m) return null;
   const raw=m[2], value=parseFloat(raw.replace(/,/g,''));
   if(!isFinite(value) || value===0) return null;
-  if(!m[1] && !m[3] && !raw.includes(',') && value>=1900 && value<=2100) return null; // kemungkinan tahun
+  if(!m[1] && !m[3] && !raw.includes(',') && value>=1900 && value<=2100) return null; // probably a year
   const suf = m[3] ? (m[3].length>1 ? ' '+m[3] : m[3]) : '';
   return {prefix:m[1]||'', suffix:suf, value, dec:(raw.split('.')[1]||'').length, comma:raw.includes(',')||value>=10000};
 }
@@ -408,20 +427,23 @@ function fmtNum(v,st){
   return tr(st.prefix + s + st.suffix);
 }
 let P = {scenes:[], total:0, autoTotal:0, imgSegs:[]};
-/* Arahan gambar dalam skrip: [gambar: nama, animasi, posisi, saiz, gerakan, 1s] */
-const IMG_TAG=/\[(?:gambar|img|image)\s*:?\s*([^\]]*)\]/gi;
-const IMG_ANIM={pop:'pop',pudar:'pudar',fade:'pudar',zum:'zum',zoom:'zum','dari-kiri':'dari-kiri','dari-kanan':'dari-kanan','dari-atas':'dari-atas','dari-bawah':'dari-bawah',naik:'dari-bawah',turun:'dari-atas',putar:'putar',lantun:'lantun'};
-const IMG_POS=new Set(['tengah','atas','bawah','kiri','kanan','penuh']);
-const IMG_SIZE=new Set(['kecil','sederhana','besar']);
-const IMG_MOVE=new Set(['terapung','goyang','pusing']);
-const IMG_WORDS=new Set([...Object.keys(IMG_ANIM),...IMG_POS,...IMG_SIZE,...IMG_MOVE]);
+/* Image commands in the script: [image: name, animation, position, size, motion, 1s]
+   English words are canonical; Malay words from older versions are still accepted. */
+const IMG_TAG=/\[(?:image|img|gambar)\s*:?\s*([^\]]*)\]/gi;
+const IMG_ANIM={pop:'pop',fade:'fade',zoom:'zoom','from-left':'from-left','from-right':'from-right','from-top':'from-top','from-bottom':'from-bottom',rotate:'rotate',bounce:'bounce',
+  pudar:'fade',zum:'zoom','dari-kiri':'from-left','dari-kanan':'from-right','dari-atas':'from-top','dari-bawah':'from-bottom',naik:'from-bottom',turun:'from-top',putar:'rotate',lantun:'bounce'};
+const IMG_POS={center:'center',top:'top',bottom:'bottom',left:'left',right:'right',full:'full',
+  tengah:'center',atas:'top',bawah:'bottom',kiri:'left',kanan:'right',penuh:'full'};
+const IMG_SIZE={small:'small',medium:'medium',large:'large',kecil:'small',sederhana:'medium',besar:'large'};
+const IMG_MOVE={float:'float',wiggle:'wiggle',spin:'spin',terapung:'float',goyang:'wiggle',pusing:'spin'};
+const IMG_WORDS=new Set([...Object.keys(IMG_ANIM),...Object.keys(IMG_POS),...Object.keys(IMG_SIZE),...Object.keys(IMG_MOVE)]);
 function parseImgArgs(args){
-  const im={name:'',anim:'pop',pos:'tengah',size:null,delay:null,moves:[]};
+  const im={name:'',anim:'pop',pos:'center',size:null,delay:null,moves:[]};
   for(const tok of args.toLowerCase().split(/[,\s]+/).filter(Boolean)){
     if(IMG_ANIM[tok]) im.anim=IMG_ANIM[tok];
-    else if(IMG_POS.has(tok)) im.pos=tok;
-    else if(IMG_SIZE.has(tok)) im.size=tok;
-    else if(IMG_MOVE.has(tok)) im.moves.push(tok);
+    else if(IMG_POS[tok]) im.pos=IMG_POS[tok];
+    else if(IMG_SIZE[tok]) im.size=IMG_SIZE[tok];
+    else if(IMG_MOVE[tok]) im.moves.push(IMG_MOVE[tok]);
     else if(/^\d+(\.\d+)?s$/.test(tok)) im.delay=parseFloat(tok);
     else if(!im.name) im.name=tok;
   }
@@ -478,22 +500,22 @@ function parseScript(){
     if(state.anim==='type' && s.type!=='list') d = Math.max(d, s.text.length/26 + 1.6);
     s.dur = Math.max(2.2, d*sp);
     const clip = state.voMode==='mic' ? voClips.get(s.voKey) : null;
-    s.voice = clip||null; s.voMin = clip ? clip.dur+.35+.55 : 0;  // suara mula 0.35s selepas babak bermula
+    s.voice = clip||null; s.voMin = clip ? clip.dur+.35+.55 : 0;  // voice starts 0.35s after the scene begins
     s.dur = Math.max(s.dur, s.voMin); s.start=t; t+=s.dur;
   }
-  // panjang video: auto (maks 2 min) atau tetap — skala semua babak
+  // video length: auto (max 2 min) or fixed — scale every scene
   const autoTotal=t;
   let target = state.length==='auto' ? Math.min(t,MAX_LEN) : Math.min(+state.length,MAX_LEN);
   if(state.voMode==='file' && voFile && state.voFit && state.length==='auto') target=Math.min(voFile.dur+.8,MAX_LEN);
   if(scenes.length && Math.abs(target-t)>.01){
-    // babak yang ada suara tidak dipendekkan kurang daripada panjang suara
+    // scenes with a voice clip are never shorter than the clip
     const fixed=scenes.reduce((a,s)=>a+(s.voMin?s.voMin:0),0);
     let f=target/t;
     for(let k=0;k<6;k++){ const tot=scenes.reduce((a,s)=>a+Math.max(s.dur*f,s.voMin),0); if(Math.abs(tot-target)<.05||tot<=fixed) break; f*=target/tot; }
     t=0;
     for(const s of scenes){ const nd=Math.max(s.dur*f,s.voMin); if(s.itemTimes) s.itemTimes=s.itemTimes.map(x=>x*nd/s.dur); s.dur=nd; s.start=t; t+=s.dur; }
   }
-  // segmen gambar latar
+  // background image segments
   const imgSegs=[], n=bgImgs.length;
   if(n && t>0){
     if(state.imgMode==='even' || n===1){ const L=t/n; for(let i=0;i<n;i++) imgSegs.push({start:i*L,dur:L,img:i}); }
@@ -502,7 +524,7 @@ function parseScript(){
   P = {scenes, total:t, autoTotal, imgSegs};
 }
 
-/* ===================== Susun atur teks ===================== */
+/* ===================== Text layout ===================== */
 function tokenize(text){
   const out=[];
   text.split(/\*([^*]+)\*/).forEach((part,i)=> part.split(/\s+/).filter(Boolean).forEach(w=>out.push({w, hi:i%2===1})));
@@ -539,7 +561,7 @@ function cached(s,key,fn){
   return s._c[key] ??= fn();
 }
 
-/* ===================== Animasi perkataan ===================== */
+/* ===================== Word animation ===================== */
 function drawWords(L,o){
   const u=U(), size=L.size;
   ctx.font=fontStr(size,L.bold); ctx.textBaseline='middle'; ctx.textAlign='left';
@@ -580,14 +602,14 @@ function drawWord(wd,x,y,text,o,size,q){
 }
 function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); }
 
-/* ===================== Latar belakang ===================== */
+/* ===================== Background ===================== */
 const RND = mulberry(7);
 const PARTS = Array.from({length:70},()=>({x:RND(),y:RND(),r:RND(),s:.02+RND()*.06,a:.15+RND()*.45,c:Math.floor(RND()*3)}));
 const SHAPES = Array.from({length:9},()=>({x:RND(),y:RND(),r:.04+RND()*.09,k:Math.floor(RND()*4),ph:RND()*6.28,sp:.2+RND()*.4,c:Math.floor(RND()*2)}));
 function drawCover(i,k,p,alpha){
   const img=bgImgs[i] && bgImgs[i].img; if(!img) return;
   const iw=img.naturalWidth, ih=img.naturalHeight;
-  // zum masuk / keluar berselang-seli, dengan sedikit gerakan sisi
+  // alternate zoom in / out, with a slight sideways pan
   const z=state.kenburns ? (k%2===0 ? 1+.12*p : 1.12-.12*p) : 1;
   const sc=Math.max(W/iw,H/ih)*z, dw=iw*sc, dh=ih*sc;
   const pan=state.kenburns ? (k%2===0?1:-1)*(p-.5)*(dw-W)*.5 : 0;
@@ -596,7 +618,7 @@ function drawCover(i,k,p,alpha){
 function drawBg(t){
   const th=theme(), u=U();
   if(th.image){
-    // gambar sendiri: ikut turutan, "cover" + zum perlahan + crossfade + lapisan gelap/cerah
+    // custom images: in order, "cover" fit + slow zoom + crossfade + dark/light overlay
     const segs=P.imgSegs, XF=.7;
     let k=segs.findIndex(s=>t<s.start+s.dur); if(k<0) k=segs.length-1;
     const seg=segs[k]||{start:0,dur:1,img:0}, lt=t-seg.start;
@@ -644,42 +666,42 @@ function drawBg(t){
   }
 }
 
-/* ===================== Babak ===================== */
+/* ===================== Scenes ===================== */
 const ANIMS=['pop','fade','slide','type','zoom'];
 const animFor = idx => state.anim==='random' ? ANIMS[(idx*3+1)%ANIMS.length] : state.anim;
 
-/* ===================== Gambar dalam babak ===================== */
+/* ===================== Images in scenes ===================== */
 function sceneBoxes(s){
   const full={cx:W/2,cy:H/2,w:W,h:H}, imgs=s.imgs||[];
   if(!imgs.length || s.type==='list') return {text:full,img:null};
   if(s.type==='image') return {text:null,img:{cx:W/2,cy:H/2,w:W*.86,h:H*.78}};
   let p=imgs[0].pos;
-  if(p==='penuh') return {text:full,img:{full:true}};
-  if(p==='tengah') p='atas';
-  if(H>W*1.1 && (p==='kiri'||p==='kanan')) p = p==='kiri'?'atas':'bawah'; // skrin menegak: tiada ruang sisi
-  if(p==='atas')  return {img:{cx:W/2,cy:H*.29,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.72,w:W,h:H*.48}};
-  if(p==='bawah') return {img:{cx:W/2,cy:H*.71,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.28,w:W,h:H*.48}};
-  if(p==='kiri')  return {img:{cx:W*.27,cy:H/2,w:W*.4,h:H*.72}, text:{cx:W*.69,cy:H/2,w:W*.6,h:H}};
+  if(p==='full') return {text:full,img:{full:true}};
+  if(p==='center') p='top';
+  if(H>W*1.1 && (p==='left'||p==='right')) p = p==='left'?'top':'bottom'; // portrait: no room at the sides
+  if(p==='top')  return {img:{cx:W/2,cy:H*.29,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.72,w:W,h:H*.48}};
+  if(p==='bottom') return {img:{cx:W/2,cy:H*.71,w:W*.84,h:H*.38}, text:{cx:W/2,cy:H*.28,w:W,h:H*.48}};
+  if(p==='left')  return {img:{cx:W*.27,cy:H/2,w:W*.4,h:H*.72}, text:{cx:W*.69,cy:H/2,w:W*.6,h:H}};
   return {img:{cx:W*.73,cy:H/2,w:W*.4,h:H*.72}, text:{cx:W*.31,cy:H/2,w:W*.6,h:H}};
 }
 function imgMotion(im,lt,t,i){
-  // animasi masuk + gerakan berterusan
-  const d=im.delay??i*.15, dur=im.anim==='lantun'?.9:.6, q=clamp((lt-d)/dur), e=easeOutCubic(q), u=U();
+  // entrance animation + continuous motion
+  const d=im.delay??i*.15, dur=im.anim==='bounce'?.9:.6, q=clamp((lt-d)/dur), e=easeOutCubic(q), u=U();
   const m={q,a:1,dx:0,dy:0,sc:1,rot:0};
   switch(im.anim){
     case 'pop': m.sc=easeOutBack(q); m.a=clamp(q*3); break;
-    case 'pudar': m.a=e; break;
-    case 'zum': m.sc=1.5-.5*e; m.a=e; break;
-    case 'dari-kiri': m.dx=-(1-e)*W*.6; m.a=clamp(q*2); break;
-    case 'dari-kanan': m.dx=(1-e)*W*.6; m.a=clamp(q*2); break;
-    case 'dari-atas': m.dy=-(1-e)*H*.4; m.a=clamp(q*2); break;
-    case 'dari-bawah': m.dy=(1-e)*H*.4; m.a=clamp(q*2); break;
-    case 'putar': m.rot=-(1-easeOutBack(q))*Math.PI; m.sc=e; m.a=clamp(q*2); break;
-    case 'lantun': m.dy=-(1-easeOutBounce(q))*H*.5; m.a=clamp(q*4); break;
+    case 'fade': m.a=e; break;
+    case 'zoom': m.sc=1.5-.5*e; m.a=e; break;
+    case 'from-left': m.dx=-(1-e)*W*.6; m.a=clamp(q*2); break;
+    case 'from-right': m.dx=(1-e)*W*.6; m.a=clamp(q*2); break;
+    case 'from-top': m.dy=-(1-e)*H*.4; m.a=clamp(q*2); break;
+    case 'from-bottom': m.dy=(1-e)*H*.4; m.a=clamp(q*2); break;
+    case 'rotate': m.rot=-(1-easeOutBack(q))*Math.PI; m.sc=e; m.a=clamp(q*2); break;
+    case 'bounce': m.dy=-(1-easeOutBounce(q))*H*.5; m.a=clamp(q*4); break;
   }
-  if(im.moves.includes('terapung')) m.dy+=Math.sin(t*2.2+i*1.3)*14*u;
-  if(im.moves.includes('goyang')) m.rot+=Math.sin(t*4+i)*.07;
-  if(im.moves.includes('pusing')) m.rot+=Math.max(0,lt-d)*1.2;
+  if(im.moves.includes('float')) m.dy+=Math.sin(t*2.2+i*1.3)*14*u;
+  if(im.moves.includes('wiggle')) m.rot+=Math.sin(t*4+i)*.07;
+  if(im.moves.includes('spin')) m.rot+=Math.max(0,lt-d)*1.2;
   return m;
 }
 function drawImgBox(rec,w,h,name){
@@ -688,7 +710,7 @@ function drawImgBox(rec,w,h,name){
     ctx.setLineDash([14*u,10*u]); ctx.lineWidth=4*u; ctx.strokeStyle=hexA(theme().text,.6);
     roundRect(-w/2,-h/2,w,h,18*u); ctx.stroke(); ctx.setLineDash([]);
     ctx.font=fontStr(Math.max(16,30*u),false); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle=hexA(theme().text,.8);
-    ctx.fillText(`gambar "${name||'?'}" tiada`,0,0); return;
+    ctx.fillText(`image "${name||'?'}" not found`,0,0); return;
   }
   if(rec.opaque){
     const r=Math.min(w,h)*.05;
@@ -701,7 +723,7 @@ function drawImgBox(rec,w,h,name){
 function drawSceneImg(im,slot,lt,t,i,stype){
   const rec=findSceneImg(im.name), m=imgMotion(im,lt,t,i);
   if(m.q<=0) return;
-  const sz={kecil:.5,sederhana:.78,besar:1}[im.size||(stype==='image'?'besar':'sederhana')];
+  const sz={small:.5,medium:.78,large:1}[im.size||(stype==='image'?'large':'medium')];
   let w=slot.w*.6*sz, h=slot.h*.6*sz;
   if(rec){ const r=Math.min(slot.w/rec.img.naturalWidth,slot.h/rec.img.naturalHeight)*sz; w=rec.img.naturalWidth*r; h=rec.img.naturalHeight*r; }
   ctx.save(); ctx.globalAlpha*=m.a; ctx.translate(slot.cx+m.dx,slot.cy+m.dy); ctx.rotate(m.rot); ctx.scale(m.sc,m.sc);
@@ -855,19 +877,49 @@ function drawFrame(t){
   ctx.restore();
 }
 
-/* ===================== Audio (muzik + SFX) ===================== */
+/* ===================== Audio (music + SFX + voice) ===================== */
 const NOTE = {C3:130.81,E3:164.81,F3:174.61,G3:196,A3:220,B3:246.94,C4:261.63,D4:293.66,E4:329.63,G4:392};
 const CHORDS = {
   Am:[NOTE.A3,NOTE.C4,NOTE.E4,NOTE.G4], F:[NOTE.F3,NOTE.A3,NOTE.C4,NOTE.E4],
   C:[NOTE.C3,NOTE.E3,NOTE.G3,NOTE.B3],  G:[NOTE.G3,NOTE.B3,NOTE.D4,NOTE.E4],
 };
+/* Transition sounds — all synthesised, no files needed. Lead = seconds before the cut. */
+const SFX_LEAD={whoosh:.3,swoosh:.2,riser:.85,swipe:.12};
+function makeSfx(ac,out,nb){
+  const g=(at,peak,att,dur)=>{ const n=ac.createGain(); n.gain.setValueAtTime(0.0001,at); n.gain.linearRampToValueAtTime(peak,at+att); n.gain.exponentialRampToValueAtTime(0.0001,at+dur); n.connect(out); return n; };
+  const noise=(at,dur)=>{ const s=ac.createBufferSource(); s.buffer=nb; s.start(at,Math.random()*.4); s.stop(at+dur+.05); return s; };
+  const filt=(type,f,q=1)=>{ const b=ac.createBiquadFilter(); b.type=type; b.frequency.value=f; b.Q.value=q; return b; };
+  const osc=(type,f,at,dur)=>{ const o=ac.createOscillator(); o.type=type; o.frequency.setValueAtTime(f,at); o.start(at); o.stop(at+dur+.05); return o; };
+  return {
+    whoosh(at){ const f=filt('bandpass',300,1.2); f.frequency.setValueAtTime(300,at); f.frequency.exponentialRampToValueAtTime(3500,at+.45); noise(at,.65).connect(f).connect(g(at,.3,.3,.6)); },
+    swoosh(at){ const f=filt('highpass',1200,.8); f.frequency.setValueAtTime(1200,at); f.frequency.exponentialRampToValueAtTime(8000,at+.25); noise(at,.35).connect(f).connect(g(at,.35,.18,.32)); },
+    pop(at){ const o=osc('sine',650,at,.15); o.frequency.exponentialRampToValueAtTime(160,at+.09); o.connect(g(at,.55,.004,.14)); },
+    click(at){ noise(at,.03).connect(filt('highpass',2500)).connect(g(at,.4,.001,.025)); osc('square',1800,at,.03).connect(filt('lowpass',4000)).connect(g(at,.12,.001,.03)); },
+    ding(at){ [[1318.5,.22],[1975.5,.1],[2637,.05]].forEach(([f,v])=>osc('sine',f,at,1.4).connect(g(at,v,.005,1.3))); },
+    swipe(at){ const o=osc('sawtooth',180,at,.25); o.frequency.exponentialRampToValueAtTime(1400,at+.2); const f=filt('lowpass',900); f.frequency.setValueAtTime(600,at); f.frequency.exponentialRampToValueAtTime(5000,at+.2); o.connect(f).connect(g(at,.1,.02,.24)); },
+    riser(at){ const d=.85, f=filt('bandpass',400,2); f.frequency.setValueAtTime(400,at); f.frequency.exponentialRampToValueAtTime(5000,at+d);
+      const n=ac.createGain(); n.gain.setValueAtTime(0.0001,at); n.gain.exponentialRampToValueAtTime(.35,at+d); n.gain.linearRampToValueAtTime(0,at+d+.05); n.connect(out);
+      noise(at,d+.1).connect(f).connect(n); const o=osc('sawtooth',150,at,d+.1); o.frequency.exponentialRampToValueAtTime(900,at+d); o.connect(filt('lowpass',2000)).connect(n); },
+    glitch(at){ for(let i=0;i<6;i++){ const t=at+i*.035+Math.random()*.01, d=.02+Math.random()*.02; osc('square',200+Math.random()*1800,t,d).connect(g(t,.09,.001,d)); if(i%2) noise(t,d).connect(filt('bandpass',1000+Math.random()*4000,3)).connect(g(t,.25,.001,d)); } },
+    impact(at){ const o=osc('sine',110,at,.9); o.frequency.exponentialRampToValueAtTime(32,at+.5); o.connect(g(at,.8,.004,.85)); noise(at,.35).connect(filt('lowpass',900)).connect(g(at,.4,.002,.3)); },
+  };
+}
+let sfxPreviewAc=null;
+function previewSfx(type){
+  if(type==='none') return;
+  try{ sfxPreviewAc&&sfxPreviewAc.close(); }catch(e){}
+  const ac=sfxPreviewAc=new (window.AudioContext||window.webkitAudioContext)();
+  const nb=ac.createBuffer(1,ac.sampleRate,ac.sampleRate), d=nb.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  const out=ac.createGain(); out.gain.value=.8; out.connect(ac.destination);
+  makeSfx(ac,out,nb)[type](ac.currentTime+.05);
+}
 function createAudio(total){
   const useCustom = state.music==='custom' && musicBuf;
   const voiceScenes = state.voMode==='mic' ? P.scenes.filter(s=>s.voice) : [];
   const voiceFile = state.voMode==='file' ? voFile : null;
   const hasVoice = voiceScenes.length>0 || !!voiceFile;
   const hasMusic = useCustom || state.music==='chill' || state.music==='upbeat';
-  if(!hasMusic && !state.sfx && !hasVoice) return null;
+  if(!hasMusic && state.sfx==='none' && !hasVoice) return null;
   const ac=new (window.AudioContext||window.webkitAudioContext)();
   const dest=ac.createMediaStreamDestination();
   const comp=ac.createDynamicsCompressor(), master=ac.createGain(), mus=ac.createGain();
@@ -875,11 +927,11 @@ function createAudio(total){
   mus.connect(master);
   const vog=ac.createGain(); vog.gain.value=1.1; vog.connect(master);
   const T0=ac.currentTime+.15;
-  const mv=state.musicVol*(hasVoice?.3:1); // muzik diperlahankan bila ada suara
+  const mv=state.musicVol*(hasVoice?.3:1); // music is ducked while there is a voice
   mus.gain.setValueAtTime(mv,T0); mus.gain.setValueAtTime(mv,T0+Math.max(0,total-1.6)); mus.gain.linearRampToValueAtTime(0,T0+total);
   if(voiceFile){ const src=ac.createBufferSource(); src.buffer=voiceFile.buf; src.connect(vog); src.start(T0+.1,voiceFile.off,Math.min(voiceFile.dur,total)); }
   if(useCustom){
-    // muzik sendiri: main dari saat pilihan, ulang jika perlu
+    // custom music: play from the chosen second, loop if needed
     const src=ac.createBufferSource(); src.buffer=musicBuf;
     const off=Math.min(Math.max(0,+state.musicOffset||0), Math.max(0,musicBuf.duration-.1));
     if(state.musicLoop){ src.loop=true; src.loopStart=off; src.loopEnd=musicBuf.duration; }
@@ -917,12 +969,7 @@ function createAudio(total){
       }
     }
   }
-  if(state.sfx) P.scenes.slice(1).forEach(s=>events.push([s.start-.3,at=>{
-    const src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain(); src.buffer=nb; f.type='bandpass'; f.Q.value=1.2;
-    f.frequency.setValueAtTime(300,at); f.frequency.exponentialRampToValueAtTime(3500,at+.45);
-    g.gain.setValueAtTime(0.0001,at); g.gain.linearRampToValueAtTime(.3,at+.3); g.gain.exponentialRampToValueAtTime(0.0001,at+.6);
-    src.connect(f).connect(g).connect(master); src.start(at); src.stop(at+.65);
-  }]));
+  if(state.sfx!=='none'){ const fx=makeSfx(ac,master,nb), lead=SFX_LEAD[state.sfx]||0; P.scenes.slice(1).forEach(s=>events.push([s.start-lead,at=>fx[state.sfx]&&fx[state.sfx](at)])); }
   voiceScenes.forEach(s=>events.push([s.start+.35,at=>{ const src=ac.createBufferSource(); src.buffer=s.voice.buf; src.connect(vog); src.start(at,s.voice.off,s.voice.dur); }]));
   events.sort((a,b)=>a[0]-b[0]);
   let ei=0;
@@ -934,7 +981,7 @@ function createAudio(total){
   };
 }
 
-/* ===================== Main / rakam ===================== */
+/* ===================== Play / record ===================== */
 let run=null;
 function pickMime(){
   const list=['video/mp4;codecs=avc1.42E01F,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
@@ -949,19 +996,19 @@ function setBusy(b){ $('#controls').disabled=b; $('#createBtn').disabled=b; $('#
 async function start(record){
   if(run) return;
   parseScript(); applyDims(); await ensureFonts();
-  if(!P.scenes.length){ alert('Sila tulis skrip dahulu.'); return; }
+  if(!P.scenes.length){ alert('Please write a script first.'); return; }
   const total=P.total, audio=createAudio(total);
   let rec=null, chunks=[], mime='';
   if(record){
     mime=pickMime();
-    if(!mime || !cv.captureStream){ audio&&audio.close(); alert('Pelayar ini tidak menyokong rakaman video. Sila guna Google Chrome atau Microsoft Edge versi terkini.'); return; }
+    if(!mime || !cv.captureStream){ audio&&audio.close(); alert('This browser cannot record video. Please use the latest Google Chrome or Microsoft Edge.'); return; }
     const stream=cv.captureStream(30);
     if(audio) audio.dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
     rec=new MediaRecorder(stream,{mimeType:mime, videoBitsPerSecond:state.quality==='1080'?8e6:5e6, audioBitsPerSecond:160000});
     rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
     $('#result').hidden=true; $('#status').hidden=false;
   }
-  setBusy(true); $('#playBtn').textContent='■ Henti';
+  setBusy(true); $('#playBtn').textContent='■ Stop';
   const t0=performance.now();
   run={record,audio,rec,cancelled:false,raf:0};
   if(rec) rec.start(250);
@@ -974,7 +1021,7 @@ async function start(record){
       audio&&audio.pump();
       drawFrame(Math.min(t,total));
       $('#scrub').value=Math.min(t,total); $('#time').textContent=`${fmtTime(Math.min(t,total))} / ${fmtTime(total)}`;
-      if(record){ $('.bar i').style.width=`${clamp(t/total)*100}%`; $('#statusText').textContent=`Sedang merakam… ${Math.round(clamp(t/total)*100)}% — jangan tutup atau tukar tab.`; }
+      if(record){ $('.bar i').style.width=`${clamp(t/total)*100}%`; $('#statusText').textContent=`Recording… ${Math.round(clamp(t/total)*100)}% — don't close or switch this tab.`; }
       if(t<total+.2) run.raf=requestAnimationFrame(frame); else resolve();
     };
     run.raf=requestAnimationFrame(frame);
@@ -987,13 +1034,13 @@ async function start(record){
       const ext=mime.includes('mp4')?'mp4':'webm';
       const v=$('#result video'); if(v.src) URL.revokeObjectURL(v.src); v.src=url;
       const a=$('#dl'); a.href=url; a.download=`video-grafik-${state.format.replace(':','x')}-${Date.now()}.${ext}`;
-      $('#resultInfo').textContent=`${W}×${H} · ${fmtTime(total)} · ${(blob.size/1048576).toFixed(1)} MB · ${ext.toUpperCase()}`+(ext==='webm'?' — boleh terus upload ke YouTube/TikTok, atau tukar ke MP4 jika perlu.':'');
+      $('#resultInfo').textContent=`${W}×${H} · ${fmtTime(total)} · ${(blob.size/1048576).toFixed(1)} MB · ${ext.toUpperCase()}`+(ext==='webm'?' — can be uploaded straight to YouTube/TikTok, or converted to MP4 if needed.':'');
       $('#result').hidden=false;
     }
     $('#status').hidden=true;
   }
   r.audio&&r.audio.close();
-  setBusy(false); $('#playBtn').textContent='▶ Pratonton';
+  setBusy(false); $('#playBtn').textContent='▶ Preview';
 }
 function stop(){ if(!run) return; run.cancelled=true; cancelAnimationFrame(run.raf); run.resolve&&run.resolve(); }
 
@@ -1011,16 +1058,16 @@ function renderGroups(){
   $('#lengthBox').innerHTML=chipsHtml(LENGTH_GROUP);
   $('#voModeBox').innerHTML=chipsHtml(VO_GROUP);
 }
-const LABEL={title:'Tajuk',text:'Teks',stat:'Nombor',list:'Senarai',outro:'Penutup',image:'Gambar'};
+const LABEL={title:'Title',text:'Text',stat:'Number',list:'List',outro:'Closing',image:'Image'};
 function refresh(){
   save(); parseScript(); applyDims();
   const avg=P.scenes.length?P.total/P.scenes.length:0;
-  let info=`${P.scenes.length} babak · ${fmtTime(P.total)}`;
-  if(state.length==='auto' && P.autoTotal>MAX_LEN) info+=' (dipendekkan ke had 2 min)';
-  if(P.total>MAX_LEN+.5) info+=' · ⚠ melebihi 2 min kerana suara';
+  let info=`${P.scenes.length} scenes · ${fmtTime(P.total)}`;
+  if(state.length==='auto' && P.autoTotal>MAX_LEN) info+=' (trimmed to the 2 min limit)';
+  if(P.total>MAX_LEN+.5) info+=' · ⚠ over 2 min because of the voiceover';
   const tgt=state.length==='auto'?null:+state.length;
-  $('#lenInfo').textContent = tgt && Math.abs(P.total-tgt)>.5 ? `jadi ${fmtTime(P.total)} — ikut panjang suara` : `video: ${fmtTime(P.total)}`;
-  if(P.scenes.length && avg<1.6) info+=' · ⚠ babak terlalu laju — pilih panjang lebih lama';
+  $('#lenInfo').textContent = tgt && Math.abs(P.total-tgt)>.5 ? `now ${fmtTime(P.total)} — stretched to fit the voice` : `video: ${fmtTime(P.total)}`;
+  if(P.scenes.length && avg<1.6) info+=' · ⚠ scenes too fast — pick a longer length';
   $('#sceneInfo').textContent=info;
   renderVoList();
   $('#sceneList').innerHTML=P.scenes.map((s,i)=>`<span><b>${i+1}</b> ${LABEL[s.type]} · ${s.dur.toFixed(1)}s</span>`).join('');
@@ -1034,10 +1081,11 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('.chip'); if(!b) return;
   state[b.dataset.key]=b.dataset.val;
   document.querySelectorAll(`.chip[data-key="${b.dataset.key}"]`).forEach(c=>c.setAttribute('aria-pressed',c===b));
+  if(b.dataset.key==='sfx') previewSfx(b.dataset.val);
   if(b.dataset.key==='font') ensureFonts().then(refresh); else refresh();
 });
 
-/* ----- Latar sendiri (warna / gambar) ----- */
+/* ----- Custom background (colour / image) ----- */
 const bgPanel=$('#bgPanel');
 document.querySelector('.chip[data-key="bgMode"]').closest('.group').after(bgPanel);
 function syncBgPanel(){
@@ -1055,10 +1103,10 @@ $('#overlay').addEventListener('input',e=>{ state.overlay=+e.target.value; syncB
 $('#kenburns').checked=state.kenburns;
 $('#kenburns').addEventListener('change',e=>{ state.kenburns=e.target.checked; refresh(); });
 
-/* ----- Banyak gambar: muat naik, susun, buang ----- */
+/* ----- Multiple background images: upload, reorder, remove ----- */
 function blobToImage(blob){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>res(img); img.onerror=rej; img.src=URL.createObjectURL(blob); }); }
 async function shrinkImage(file){
-  // kecilkan ke maks 2400px supaya laju & jimat ruang
+  // shrink to max 2400px for speed & storage
   const src=await blobToImage(file);
   const k=Math.min(1,2400/Math.max(src.naturalWidth,src.naturalHeight));
   const c=document.createElement('canvas'); c.width=Math.round(src.naturalWidth*k); c.height=Math.round(src.naturalHeight*k);
@@ -1069,7 +1117,7 @@ const persistImages = () => idb.set('bgImages', bgImgs.map(x=>x.blob));
 async function addImages(files){
   const list=[...files].filter(f=>f.type.startsWith('image/'));
   if(!list.length) return;
-  $('#dropText').textContent='Memproses gambar…';
+  $('#dropText').textContent='Processing images…';
   for(const f of list){ try{ const blob=await shrinkImage(f); bgImgs.push({blob, img:await blobToImage(blob)}); }catch(e){} }
   persistImages(); renderImgList(); refresh();
 }
@@ -1082,10 +1130,10 @@ function removeImage(i){ const [x]=bgImgs.splice(i,1); URL.revokeObjectURL(x.img
 function renderImgList(){
   const n=bgImgs.length;
   $('#imgList').innerHTML=bgImgs.map((x,i)=>`<div class="thumb" draggable="true" data-i="${i}">
-    <img src="${x.img.src}" alt="Gambar ${i+1}"><span class="num">${i+1}</span>
-    <div class="tact"><button type="button" data-act="left" ${i===0?'disabled':''} aria-label="Ke kiri">‹</button><button type="button" data-act="right" ${i===n-1?'disabled':''} aria-label="Ke kanan">›</button><button type="button" data-act="del" aria-label="Buang">×</button></div></div>`).join('');
+    <img src="${x.img.src}" alt="Image ${i+1}"><span class="num">${i+1}</span>
+    <div class="tact"><button type="button" data-act="left" ${i===0?'disabled':''} aria-label="Move left">‹</button><button type="button" data-act="right" ${i===n-1?'disabled':''} aria-label="Move right">›</button><button type="button" data-act="del" aria-label="Remove">×</button></div></div>`).join('');
   $('#imgHint').hidden=n<2; $('#bgClear').hidden=!n;
-  $('#dropText').textContent = n ? `${n} gambar dipilih — klik atau seret untuk tambah lagi` : 'Klik atau seret gambar ke sini — boleh pilih banyak sekaligus (JPG / PNG / WEBP)';
+  $('#dropText').textContent = n ? `${n} image${n>1?'s':''} selected — click or drag to add more` : 'Click or drag images here — you can pick several at once (JPG / PNG / WEBP)';
 }
 const imgList=$('#imgList');
 imgList.addEventListener('click',e=>{
@@ -1117,14 +1165,14 @@ function setupDrop(el,onFiles){
 setupDrop($('#drop'),addImages);
 $('#bgClear').addEventListener('click',()=>{ bgImgs.forEach(x=>URL.revokeObjectURL(x.img.src)); bgImgs=[]; persistImages(); renderImgList(); refresh(); });
 
-/* ----- Muzik sendiri ----- */
+/* ----- Custom music ----- */
 const musicPanel=$('#musicPanel');
 document.querySelector('.chip[data-key="music"]').closest('.group').after(musicPanel);
 function syncMusicPanel(){
   musicPanel.hidden = state.music==='none';
   musicPanel.querySelectorAll('[data-show]').forEach(el=>el.hidden = el.dataset.show!==state.music || (el.id==='musicClear' && !musicBuf));
   $('#musicVolVal').textContent=Math.round(state.musicVol*100)+'%';
-  $('#musicText').textContent = musicBuf ? `♪ ${musicName} (${fmtTime(musicBuf.duration)}) — klik untuk tukar` : 'Klik atau seret fail muzik ke sini (MP3 / WAV / M4A / OGG)';
+  $('#musicText').textContent = musicBuf ? `♪ ${musicName} (${fmtTime(musicBuf.duration)}) — click to change` : 'Click or drag a music file here (MP3 / WAV / M4A / OGG)';
 }
 async function decodeMusic(blob){
   const ac=new OfflineAudioContext(2,44100,44100);
@@ -1132,11 +1180,11 @@ async function decodeMusic(blob){
 }
 async function setMusic(file, persist){
   if(!file) return;
-  $('#musicText').textContent='Memproses muzik…';
+  $('#musicText').textContent='Processing music…';
   try{
-    musicBuf=await decodeMusic(file); musicName=file.name||'muzik';
+    musicBuf=await decodeMusic(file); musicName=file.name||'music';
     if(persist) idb.set('music',{name:musicName, blob:file});
-  }catch(e){ musicBuf=null; alert('Fail muzik ini tidak dapat dibaca. Cuba MP3 atau WAV.'); }
+  }catch(e){ musicBuf=null; alert('This music file could not be read. Try MP3 or WAV.'); }
   syncMusicPanel();
 }
 $('#musicFile').addEventListener('change',e=>{ setMusic(e.target.files[0],true); e.target.value=''; });
@@ -1150,10 +1198,10 @@ $('#musicOffset').value=state.musicOffset;
 $('#musicOffset').addEventListener('input',e=>{ state.musicOffset=Math.max(0,+e.target.value||0); save(); });
 document.addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="music"]')) syncMusicPanel(); });
 
-/* ----- Gambar dalam babak ----- */
+/* ----- Images in scenes ----- */
 function slugName(fname){
-  let b=fname.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'gambar';
-  if(IMG_WORDS.has(b) || /^\d/.test(b)) b='gambar-'+b;
+  let b=fname.replace(/\.[^.]+$/,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'image';
+  if(IMG_WORDS.has(b) || /^\d/.test(b)) b='img-'+b;
   let n=b,k=2; while(sceneImgs.some(x=>x.name===n)) n=b+'-'+(k++);
   return n;
 }
@@ -1171,24 +1219,24 @@ async function shrinkSceneImage(file){
 const persistSceneImgs = () => idb.set('sceneImages', sceneImgs.map(x=>({name:x.name,blob:x.blob})));
 async function addSceneImgs(files){
   const list=[...files].filter(f=>f.type.startsWith('image/')); if(!list.length) return;
-  $('#simgText').textContent='Memproses gambar…';
+  $('#simgText').textContent='Processing images…';
   for(const f of list){ try{ const blob=await shrinkSceneImage(f), img=await blobToImage(blob); sceneImgs.push({name:slugName(f.name),blob,img,opaque:isOpaque(img)}); }catch(e){} }
   persistSceneImgs(); renderSceneImgs(); refresh();
 }
 function renderSceneImgs(){
-  $('#simgList').innerHTML=sceneImgs.map((x,i)=>`<div class="thumb simg" data-i="${i}" title="[gambar: ${x.name}]">
+  $('#simgList').innerHTML=sceneImgs.map((x,i)=>`<div class="thumb simg" data-i="${i}" title="[image: ${x.name}]">
     <img src="${x.img.src}" alt="${esc(x.name)}"><span class="num">${i+1}</span><span class="name">${esc(x.name)}</span>
-    <div class="tact"><button type="button" data-act="ins">+ Sisip</button><button type="button" data-act="del" aria-label="Buang">×</button></div></div>`).join('');
+    <div class="tact"><button type="button" data-act="ins">+ Insert</button><button type="button" data-act="del" aria-label="Remove">×</button></div></div>`).join('');
   $('#simgOpts').hidden=!sceneImgs.length;
-  $('#simgText').textContent = sceneImgs.length ? 'Klik atau seret untuk tambah lagi gambar / logo / ikon' : 'Klik atau seret gambar / logo / ikon ke sini (PNG lutsinar pun boleh)';
+  $('#simgText').textContent = sceneImgs.length ? 'Click or drag to add more images / logos / icons' : 'Click or drag images / logos / icons here (transparent PNG works)';
 }
 let lastCaret=null;
 $('#script').addEventListener('blur',e=>{ lastCaret=[e.target.selectionStart,e.target.selectionEnd]; });
 function insertImgTag(name){
   const ta=$('#script'), parts=[name,$('#simgAnim').value,$('#simgPos').value];
-  if($('#simgSize').value!=='sederhana') parts.push($('#simgSize').value);
+  if($('#simgSize').value!=='medium') parts.push($('#simgSize').value);
   if($('#simgMove').value) parts.push($('#simgMove').value);
-  const tag=`[gambar: ${parts.join(', ')}]`;
+  const tag=`[image: ${parts.join(', ')}]`;
   const [a,b]=lastCaret||[ta.value.length,ta.value.length], before=ta.value.slice(0,a), after=ta.value.slice(b);
   const pre = before && !/[\s]$/.test(before) ? ' ' : '';
   ta.value=before+pre+tag+(after && !/^\s/.test(after)?' ':'')+after;
@@ -1204,7 +1252,7 @@ $('#simgList').addEventListener('click',e=>{
 $('#simgFile').addEventListener('change',e=>{ addSceneImgs(e.target.files); e.target.value=''; });
 setupDrop($('#simgDrop'),addSceneImgs);
 
-/* ----- Suara latar (voiceover) ----- */
+/* ----- Voiceover ----- */
 function trimSilence(buf){
   const d=buf.getChannelData(0), sr=buf.sampleRate; let peak=0;
   for(let i=0;i<d.length;i+=4) peak=Math.max(peak,Math.abs(d[i]));
@@ -1226,32 +1274,32 @@ function renderVoList(){
   if(state.voMode!=='mic'){ $('#voList').innerHTML=''; return; }
   $('#voList').innerHTML=P.scenes.map((s,i)=>{
     const c=voClips.get(s.voKey), recNow=voRec&&voRec.key===s.voKey;
-    const txt = s.type==='list' ? [s.heading,...s.items].filter(Boolean).join(' · ') : (s.text || '(babak gambar)');
+    const txt = s.type==='list' ? [s.heading,...s.items].filter(Boolean).join(' · ') : (s.text || '(image scene)');
     return `<div class="vo-row"><span class="vo-n">${i+1}</span>
-      <span class="vo-t">${esc(txt)}<small>${LABEL[s.type]} · ${c?`suara ${c.dur.toFixed(1)}s`:'belum dirakam'}</small></span>
+      <span class="vo-t">${esc(txt)}<small>${LABEL[s.type]} · ${c?`voice ${c.dur.toFixed(1)}s`:'not recorded'}</small></span>
       <span class="vo-act">
-        <button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Henti':(c?'🎙 Semula':'🎙 Rakam')}</button>
-        ${c?`<button type="button" class="btn small has" data-act="play" data-i="${i}" aria-label="Dengar">▶</button><button type="button" class="btn small" data-act="del" data-i="${i}" aria-label="Buang">×</button>`:''}
+        <button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Stop':(c?'🎙 Redo':'🎙 Record')}</button>
+        ${c?`<button type="button" class="btn small has" data-act="play" data-i="${i}" aria-label="Listen">▶</button><button type="button" class="btn small" data-act="del" data-i="${i}" aria-label="Remove">×</button>`:''}
       </span></div>`;
-  }).join('') || '<p class="muted note">Tulis skrip dahulu.</p>';
+  }).join('') || '<p class="muted note">Write a script first.</p>';
 }
 async function toggleRecord(i){
   const s=P.scenes[i]; if(!s) return;
   if(voRec){ const same=voRec.key===s.voKey; voRec.rec.stop(); if(same) return; await new Promise(r=>setTimeout(r,200)); }
   let stream;
   try{ stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
-  catch(e){ alert('Tidak dapat guna mikrofon. Benarkan akses mikrofon untuk halaman ini dalam tetapan pelayar.\n\nJika anda buka fail terus dari komputer dan masih gagal, buka selector melalui link https.'); return; }
+  catch(e){ alert('Could not use the microphone. Allow microphone access for this page in your browser settings.\n\nIf you opened the file directly from your computer and it still fails, open the tool through an https link.'); return; }
   const rec=new MediaRecorder(stream), chunks=[], key=s.voKey;
   rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
   rec.onstop=async()=>{
     stream.getTracks().forEach(t=>t.stop()); clearInterval(voRec&&voRec.timer); voRec=null;
     const blob=new Blob(chunks,{type:rec.mimeType||'audio/webm'});
-    try{ const c=await makeClip(blob); voClips.set(key,c); idb.set(key,blob); }catch(e){ alert('Rakaman gagal dibaca. Cuba lagi.'); }
+    try{ const c=await makeClip(blob); voClips.set(key,c); idb.set(key,blob); }catch(e){ alert('The recording could not be read. Please try again.'); }
     refresh();
   };
   rec.start();
   voRec={key,i,rec,stream,t0:performance.now()};
-  voRec.timer=setInterval(()=>{ const b=document.querySelector(`#voList button[data-act="rec"][data-i="${voRec&&voRec.i}"]`); if(b&&voRec) b.textContent=`■ Henti (${Math.floor((performance.now()-voRec.t0)/1000)}s)`; },250);
+  voRec.timer=setInterval(()=>{ const b=document.querySelector(`#voList button[data-act="rec"][data-i="${voRec&&voRec.i}"]`); if(b&&voRec) b.textContent=`■ Stop (${Math.floor((performance.now()-voRec.t0)/1000)}s)`; },250);
   renderVoList();
 }
 $('#voList').addEventListener('click',e=>{
@@ -1265,13 +1313,13 @@ function syncVoPanel(){
   $('#voMicPanel').hidden=state.voMode!=='mic';
   $('#voFilePanel').hidden=state.voMode!=='file';
   $('#voClear').hidden=!voFile;
-  $('#voText').textContent = voFile ? `🎤 ${voFile.name} (${fmtTime(voFile.dur)}) — klik untuk tukar` : 'Klik atau seret fail suara (MP3 / WAV / M4A)';
+  $('#voText').textContent = voFile ? `🎤 ${voFile.name} (${fmtTime(voFile.dur)}) — click to change` : 'Click or drag a voice file (MP3 / WAV / M4A)';
   renderVoList();
 }
 async function setVoFile(file,persist){
-  if(!file) return; $('#voText').textContent='Memproses suara…';
-  try{ voFile={name:file.name||'suara',...await makeClip(file)}; if(persist) idb.set('voFile',{name:voFile.name,blob:file}); }
-  catch(e){ voFile=null; alert('Fail suara ini tidak dapat dibaca. Cuba MP3 atau WAV.'); }
+  if(!file) return; $('#voText').textContent='Processing voice…';
+  try{ voFile={name:file.name||'voice',...await makeClip(file)}; if(persist) idb.set('voFile',{name:voFile.name,blob:file}); }
+  catch(e){ voFile=null; alert('This voice file could not be read. Try MP3 or WAV.'); }
   syncVoPanel(); refresh();
 }
 $('#voFile').addEventListener('change',e=>{ setVoFile(e.target.files[0],true); e.target.value=''; });
@@ -1281,11 +1329,11 @@ $('#voFit').checked=state.voFit;
 $('#voFit').addEventListener('change',e=>{ state.voFit=e.target.checked; refresh(); });
 document.addEventListener('click',e=>{ if(e.target.closest('.chip[data-key="voMode"]')) syncVoPanel(); });
 
-/* ----- Muat semula fail yang disimpan ----- */
+/* ----- Reload saved files ----- */
 (async()=>{
   const blobs=await idb.get('bgImages');
   if(Array.isArray(blobs) && blobs.length){ for(const blob of blobs){ try{ bgImgs.push({blob, img:await blobToImage(blob)}); }catch(e){} } }
-  else { // pindah dari versi lama (1 gambar dalam localStorage)
+  else { // migrate from an older version (1 image in localStorage)
     try{ const old=localStorage.getItem('pvg-bgimg'); if(old){ const blob=await (await fetch(old)).blob(); bgImgs.push({blob,img:await blobToImage(blob)}); persistImages(); localStorage.removeItem('pvg-bgimg'); } }catch(e){}
   }
   renderImgList(); refresh();
@@ -1305,7 +1353,7 @@ syncBgPanel();
 $('#script').value=state.script;
 $('#script').addEventListener('input',e=>{ state.script=e.target.value; refresh(); });
 ['outro','handle'].forEach(k=>{ $('#'+k).value=state[k]; $('#'+k).addEventListener('input',e=>{ state[k]=e.target.value; refresh(); }); });
-['sfx','progress','stats','customAccent'].forEach(k=>{ $('#'+k).checked=state[k]; $('#'+k).addEventListener('change',e=>{ state[k]=e.target.checked; refresh(); }); });
+['progress','stats','customAccent'].forEach(k=>{ $('#'+k).checked=state[k]; $('#'+k).addEventListener('change',e=>{ state[k]=e.target.checked; refresh(); }); });
 $('#accent').value=state.accent;
 $('#accent').addEventListener('input',e=>{ state.accent=e.target.value; state.customAccent=true; $('#customAccent').checked=true; refresh(); });
 $('#scrub').addEventListener('input',e=>{ const t=+e.target.value; drawFrame(t); $('#time').textContent=`${fmtTime(t)} / ${fmtTime(P.total)}`; });
