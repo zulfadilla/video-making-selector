@@ -193,9 +193,10 @@
       <h2>3. Voiceover</h2>
       <div id="voModeBox" class="chips"></div>
       <div id="voMicPanel" class="subpanel" style="margin-top:14px" hidden>
-        <p class="muted note" style="margin:0 0 8px">Press <b>🎙 Record</b> on each scene, read the text, then press <b>■ Stop</b>. Scenes stretch to fit your voice. Silence at the start &amp; end is trimmed automatically.</p>
-        <p id="micOnlineNote" class="muted note" style="color:#fbbf24;margin:0 0 8px" hidden>Microphone recording isn't available in the online version. Use <b>Voice file</b> instead, or download the tool and open it on a computer.</p>
+        <p class="muted note" style="margin:0 0 8px">Press <b>🎙 Record</b> on each scene, read the text, then press <b>■ Stop</b> — or <b>⬆ Upload</b> a clip you recorded elsewhere. Scenes stretch to fit your voice. Silence at the start &amp; end is trimmed automatically.</p>
+        <p id="micOnlineNote" class="muted note" style="color:#fbbf24;margin:0 0 8px" hidden>The microphone can't be used directly in the online version. Record each line with your phone's voice recorder app (Voice Memos / Recorder), then press <b>⬆ Upload clip</b> on that scene.</p>
         <div id="voList" class="vo-list"></div>
+        <input type="file" id="voClipFile" accept="audio/*" hidden>
       </div>
       <div id="voFilePanel" class="subpanel" style="margin-top:14px" hidden>
         <label class="drop" id="voDrop">
@@ -336,7 +337,7 @@ const GROUPS = [
   {key:'quality',label:'Quality', opts:[['720','720p','faster'],['1080','1080p','HD']]},
 ];
 const LENGTH_GROUP = {key:'length', opts:[['auto','Auto','from script'],['15','15s'],['30','30s'],['45','45s'],['60','1 min'],['90','1.5 min'],['120','2 min']]};
-const VO_GROUP = {key:'voMode', opts:[['none','None'],['mic','Record your voice','per scene'],['file','Voice file','MP3 / WAV']]};
+const VO_GROUP = {key:'voMode', opts:[['none','None'],['mic','Voice per scene','record / upload'],['file','Voice file','MP3 / WAV']]};
 const DEFAULT_SCRIPT = `# 5 Amazing Facts About the Ocean
 The ocean covers about 71% of our planet
 More than 80% of the ocean is still unexplored
@@ -1397,7 +1398,8 @@ function renderVoList(){
     return `<div class="vo-row"><span class="vo-n">${i+1}</span>
       <span class="vo-t">${esc(txt)}<small>${LABEL[s.type]} · ${c?`voice ${c.dur.toFixed(1)}s`:'not recorded'}</small></span>
       <span class="vo-act">
-        <button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Stop':(c?'🎙 Redo':'🎙 Record')}</button>
+        ${ONLINE?'':`<button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Stop':(c?'🎙 Redo':'🎙 Record')}</button>`}
+        <button type="button" class="btn small" data-act="up" data-i="${i}" title="Upload a voice clip for this scene">⬆ ${ONLINE&&!c?'Upload clip':'Upload'}</button>
         ${c?`<button type="button" class="btn small has" data-act="play" data-i="${i}" aria-label="Listen">▶</button><button type="button" class="btn small" data-act="del" data-i="${i}" aria-label="Remove">×</button>`:''}
       </span></div>`;
   }).join('') || '<p class="muted note">Write a script first.</p>';
@@ -1421,10 +1423,18 @@ async function toggleRecord(i){
   voRec.timer=setInterval(()=>{ const b=document.querySelector(`#voList button[data-act="rec"][data-i="${voRec&&voRec.i}"]`); if(b&&voRec) b.textContent=`■ Stop (${Math.floor((performance.now()-voRec.t0)/1000)}s)`; },250);
   renderVoList();
 }
+let voUploadKey=null;
+$('#voClipFile').addEventListener('change',async e=>{
+  const f=e.target.files[0], key=voUploadKey; e.target.value=''; if(!f||!key) return;
+  try{ const c=await makeClip(f); voClips.set(key,c); idb.set(key,f); notify(`Voice clip added (${c.dur.toFixed(1)}s).`); }
+  catch(err){ notify('This audio file could not be read. Try M4A, MP3 or WAV.'); }
+  refresh();
+});
 $('#voList').addEventListener('click',e=>{
   const b=e.target.closest('button[data-act]'); if(!b) return;
   const i=+b.dataset.i, s=P.scenes[i]; if(!s) return;
   if(b.dataset.act==='rec') toggleRecord(i);
+  else if(b.dataset.act==='up'){ voUploadKey=s.voKey; $('#voClipFile').click(); }
   else if(b.dataset.act==='play'){ const c=voClips.get(s.voKey); c&&playClip(c); }
   else { voClips.delete(s.voKey); idb.del(s.voKey); refresh(); }
 });

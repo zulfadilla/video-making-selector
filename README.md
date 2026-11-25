@@ -32,7 +32,7 @@ Small habits, *big* results
 ## Online version
 The same tool is published as a claude.ai artifact, so it also opens on a phone.
 - The online version saves the finished video through the page's own save prompt.
-- Microphone recording isn't available online. Use **Voice file** there, or use this `index.html` on a computer.
+- The microphone can't be used directly online. On a phone, record each line with the phone's voice recorder app, then press **⬆ Upload clip** on that scene (or upload one file with **Voice file**).
 
 ## Script format
 | Write | Result |
