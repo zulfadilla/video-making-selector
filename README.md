@@ -32,7 +32,13 @@ Small habits, *big* results
 ## Online version
 The same tool is published as a claude.ai artifact, so it also opens on a phone.
 - The online version saves the finished video through the page's own save prompt.
-- The microphone can't be used directly online. On a phone, record each line with the phone's voice recorder app, then press **⬆ Upload clip** on that scene (or upload one file with **Voice file**).
+- The microphone can't be used inside the claude.ai page. There, **🎙 Record** opens the phone's own voice recorder (Android); the recording is added to the scene when you save it. **⬆ Upload** adds a clip recorded elsewhere (e.g. iPhone Voice Memos).
+
+## Full version on GitHub Pages (direct recording on any phone)
+Served from a normal https page, the microphone works everywhere, including iPhone.
+1. On GitHub open the repository **Settings → Pages**.
+2. Under *Build and deployment* choose **Deploy from a branch**, pick the branch that has `index.html` and the **/ (root)** folder, then **Save**.
+3. After a minute the tool is live at `https://zulfadilla.github.io/video-making-selector/`. Open it on the phone, choose **Voice per scene**, press **🎙 Record** and allow the microphone.
 
 ## Script format
 | Write | Result |

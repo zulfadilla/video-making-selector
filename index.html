@@ -194,9 +194,10 @@
       <div id="voModeBox" class="chips"></div>
       <div id="voMicPanel" class="subpanel" style="margin-top:14px" hidden>
         <p class="muted note" style="margin:0 0 8px">Press <b>🎙 Record</b> on each scene, read the text, then press <b>■ Stop</b> — or <b>⬆ Upload</b> a clip you recorded elsewhere. Scenes stretch to fit your voice. Silence at the start &amp; end is trimmed automatically.</p>
-        <p id="micOnlineNote" class="muted note" style="color:#fbbf24;margin:0 0 8px" hidden>The microphone can't be used directly in the online version. Record each line with your phone's voice recorder app (Voice Memos / Recorder), then press <b>⬆ Upload clip</b> on that scene.</p>
+        <p id="micOnlineNote" class="muted note" style="color:#fbbf24;margin:0 0 8px" hidden>In this version, <b>🎙 Record</b> opens your phone's voice recorder (Android). Record the line, save, and it's added to that scene. On iPhone, or to record right inside the page on any device, open the <a id="fullLink" style="color:var(--brand2)" href="https://zulfadilla.github.io/video-making-selector/" target="_blank" rel="noopener">full version</a>.</p>
         <div id="voList" class="vo-list"></div>
         <input type="file" id="voClipFile" accept="audio/*" hidden>
+        <input type="file" id="voCapFile" accept="audio/*" capture hidden>
       </div>
       <div id="voFilePanel" class="subpanel" style="margin-top:14px" hidden>
         <label class="drop" id="voDrop">
@@ -205,6 +206,8 @@
         </label>
         <div class="subrow">
           <label class="tog"><input type="checkbox" id="voFit"> Match video length to the voice (when Video length = Auto)</label>
+          <button type="button" class="btn small" id="voFileRec" hidden>🎙 Record with phone</button>
+          <input type="file" id="voFileCap" accept="audio/*" capture hidden>
           <button type="button" class="btn small" id="voClear" hidden>Remove voice</button>
         </div>
       </div>
@@ -1180,7 +1183,7 @@ $('#dl').addEventListener('click',async e=>{
     else notify('The video could not be saved here. Try opening this page in a browser.');
   }
 });
-if(ONLINE) $('#micOnlineNote').hidden=false;
+if(ONLINE){ $('#micOnlineNote').hidden=false; $('#voFileRec').hidden=false; }
 
 /* ----- Example scripts ----- */
 $('#exampleSel').insertAdjacentHTML('beforeend',EXAMPLES.map((x,i)=>`<option value="${i}">${esc(x.name)}</option>`).join(''));
@@ -1398,8 +1401,9 @@ function renderVoList(){
     return `<div class="vo-row"><span class="vo-n">${i+1}</span>
       <span class="vo-t">${esc(txt)}<small>${LABEL[s.type]} · ${c?`voice ${c.dur.toFixed(1)}s`:'not recorded'}</small></span>
       <span class="vo-act">
-        ${ONLINE?'':`<button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Stop':(c?'🎙 Redo':'🎙 Record')}</button>`}
-        <button type="button" class="btn small" data-act="up" data-i="${i}" title="Upload a voice clip for this scene">⬆ ${ONLINE&&!c?'Upload clip':'Upload'}</button>
+        ${ONLINE ? `<button type="button" class="btn small" data-act="cap" data-i="${i}" title="Opens your phone's voice recorder">🎙 ${c?'Redo':'Record'}</button>`
+                 : `<button type="button" class="btn small ${recNow?'rec':''}" data-act="rec" data-i="${i}">${recNow?'■ Stop':(c?'🎙 Redo':'🎙 Record')}</button>`}
+        <button type="button" class="btn small" data-act="up" data-i="${i}" title="Upload a voice clip for this scene">⬆ Upload</button>
         ${c?`<button type="button" class="btn small has" data-act="play" data-i="${i}" aria-label="Listen">▶</button><button type="button" class="btn small" data-act="del" data-i="${i}" aria-label="Remove">×</button>`:''}
       </span></div>`;
   }).join('') || '<p class="muted note">Write a script first.</p>';
@@ -1424,17 +1428,22 @@ async function toggleRecord(i){
   renderVoList();
 }
 let voUploadKey=null;
-$('#voClipFile').addEventListener('change',async e=>{
+async function onClipChosen(e){
   const f=e.target.files[0], key=voUploadKey; e.target.value=''; if(!f||!key) return;
   try{ const c=await makeClip(f); voClips.set(key,c); idb.set(key,f); notify(`Voice clip added (${c.dur.toFixed(1)}s).`); }
   catch(err){ notify('This audio file could not be read. Try M4A, MP3 or WAV.'); }
   refresh();
-});
+}
+$('#voClipFile').addEventListener('change',onClipChosen);
+$('#voCapFile').addEventListener('change',onClipChosen);
+$('#voFileCap').addEventListener('change',e=>{ setVoFile(e.target.files[0],true); e.target.value=''; });
+$('#voFileRec').addEventListener('click',()=>$('#voFileCap').click());
 $('#voList').addEventListener('click',e=>{
   const b=e.target.closest('button[data-act]'); if(!b) return;
   const i=+b.dataset.i, s=P.scenes[i]; if(!s) return;
   if(b.dataset.act==='rec') toggleRecord(i);
   else if(b.dataset.act==='up'){ voUploadKey=s.voKey; $('#voClipFile').click(); }
+  else if(b.dataset.act==='cap'){ voUploadKey=s.voKey; $('#voCapFile').click(); }
   else if(b.dataset.act==='play'){ const c=voClips.get(s.voKey); c&&playClip(c); }
   else { voClips.delete(s.voKey); idb.del(s.voKey); refresh(); }
 });
